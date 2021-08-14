@@ -5,23 +5,26 @@ import cv2
 import PIL.Image, PIL.ImageTk
 
 class CaptureWindow(ttk.Frame):
-    def __init__(self, master=None):
+    def __init__(self, master=None, camera=None, cap_device=0, cap_width=352, cap_height=288, delay=10):
         super().__init__(master)
-        self.master.title("Capture Window")
+        self.camera = camera
         self.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
+        self.master.title("Capture")
         self.master.columnconfigure(0, weight=1)
         self.master.rowconfigure(0, weight=1)
 
-        self.cap_device = 0
-        self.cap_width = 352
-        self.cap_height = 288
-        self.delay = 10
+        self.cap_device = cap_device
+        self.cap_width = cap_width
+        self.cap_height = cap_height
+        self.delay = delay
 
         self.create_widgets()
 
-        self.camera = USBCamera(capture_device=self.cap_device, capture_width=self.cap_width, capture_height=self.cap_height, width=self.cap_width, height=self.cap_height)
+        if self.camera == None:
+            self.camera = USBCamera(capture_device=self.cap_device, capture_width=self.cap_width, capture_height=self.cap_height, width=self.cap_width, height=self.cap_height)
         self.camera.running = True
-
+        self.master.protocol("WM_DELETE_WINDOW", self.closing_window)
+        self.running = True
         self.update()
 
     def create_widgets(self):
@@ -36,6 +39,10 @@ class CaptureWindow(ttk.Frame):
 
         # #Capture Button
 
+    def closing_window(self):
+        self.camera.running = False
+        self.master.destroy()
+
     def update(self):
         frame = self.camera.value
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -43,8 +50,9 @@ class CaptureWindow(ttk.Frame):
         self.canvas1.create_image(0, 0, image = self.photo, anchor = tk.NW)
         self.master.after(self.delay, self.update)
 
+
 if __name__ == "__main__":
     window = tk.Tk()
     app = CaptureWindow(master=window)
     app.mainloop()
-    app.camera.running = False
+    
