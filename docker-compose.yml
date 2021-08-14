@@ -1,0 +1,16 @@
+services:
+    main:
+        image: face-check:latest
+        runtime: nvidia
+        environment:
+          - DISPLAY=$DISPLAY
+        volumes:
+          - /tmp/.X11-unix:/tmp/.X11-unix
+          - ~/.Xauthority:/root/.Xauthority
+          - ~/face-check/src:/face-check/src
+          - /tmp/argus_socket:/tmp/argus_socket
+        network_mode: "host"
+        tty: true
+        stdin_open: true
+        devices:
+          - /dev/video0
