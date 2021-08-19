@@ -14,3 +14,4 @@ services:
         stdin_open: true
         devices:
           - /dev/video0
+          - /dev/video1
