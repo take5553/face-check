@@ -12,11 +12,12 @@ class Application(ttk.Frame):
         self.create_widgets()
 
         self.cap_device = 1
-        self.cap_width = 1280
-        self.cap_height = 720
-        self.delay = 30
+        self.cap_width = 800
+        self.cap_height = 600
+        self.cap_fps = 30
+        self.delay = 15
 
-        self.camera = MJPGCamera(capture_device=self.cap_device, capture_width=self.cap_width, capture_height=self.cap_height, width=self.cap_width, height=self.cap_height)
+        self.camera = MJPGCamera(capture_device=self.cap_device, capture_fps=self.cap_fps, capture_width=self.cap_width, capture_height=self.cap_height, width=self.cap_width, height=self.cap_height)
 
     def create_widgets(self):
 

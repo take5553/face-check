@@ -32,7 +32,6 @@ class CaptureWindow(ttk.Frame):
             for f in files_file:
                 if (int(f[len(self.fileprefix):len(self.fileprefix) + 4]) > self.image_index):
                     self.image_index = int(f[len(self.fileprefix):len(self.fileprefix) + 4]) + 1
-        print('image_index: {}'.format(self.image_index))
         
         self.capIms = False
 
@@ -47,7 +46,7 @@ class CaptureWindow(ttk.Frame):
 
         #Canvas
         self.canvas1 = tk.Canvas(self, width = self.cap_width, height = self.cap_height)
-        self.canvas1.grid(column=0, row=0, sticky=(tk.W, tk.E), padx=10, pady=10)
+        self.canvas1.grid(column=0, row=0, sticky=(tk.W, tk.E), pady=10)
 
         #Button Frame
         self.frame1 = ttk.Frame(self)
@@ -55,11 +54,11 @@ class CaptureWindow(ttk.Frame):
 
         #One Image Button
         self.button1 = ttk.Button(self.frame1, text="Take a pic", command=self.OneCapture)
-        self.button1.grid(column=0, row=0, padx=100, pady=40, ipady=20, sticky=(tk.W, tk.E))
+        self.button1.grid(column=0, row=0, padx=60, pady=40, ipady=20, sticky=(tk.W, tk.E))
 
         #Images Button
         self.button2 = ttk.Button(self.frame1, text="Continous images", command=self.CaptureImages)
-        self.button2.grid(column=1, row=0, padx=100, pady=40, ipady=20, sticky=(tk.W, tk.E))
+        self.button2.grid(column=1, row=0, padx=60, pady=40, ipady=20, sticky=(tk.W, tk.E))
 
         self.frame1.columnconfigure(0, weight=1)
         self.frame1.columnconfigure(1, weight=1)
