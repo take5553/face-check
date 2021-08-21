@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 from capture_window import CaptureWindow
-from mycamera import MJPGCamera
+from mycamera import MyCamera
 
 class Application(ttk.Frame):
     def __init__(self, master=None):
@@ -12,12 +12,12 @@ class Application(ttk.Frame):
         self.create_widgets()
 
         self.cap_device = 1
-        self.cap_width = 800
-        self.cap_height = 600
+        self.cap_width = 540
+        self.cap_height = 860
         self.cap_fps = 30
         self.delay = 15
 
-        self.camera = MJPGCamera(capture_device=self.cap_device, capture_fps=self.cap_fps, capture_width=self.cap_width, capture_height=self.cap_height, width=self.cap_width, height=self.cap_height)
+        self.camera = MyCamera(capture_device=self.cap_device, capture_fps=self.cap_fps, capture_width=self.cap_width, capture_height=self.cap_height, width=self.cap_width, height=self.cap_height)
 
     def create_widgets(self):
 
