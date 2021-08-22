@@ -1,12 +1,20 @@
 import subprocess
+import re
+from capture_format_info import CaptureFormatInfo
 from subprocess import PIPE
 
 
-def get_device_list():
-    command1 = "v4l2-ctl --list-devices"
+def _execute_shell_command(command):
+    if command == '':
+        raise RuntimeError('No command.')
+    
+    proc = subprocess.run(command, shell=True, stdout=PIPE, stderr=PIPE)
+    return proc.stdout.decode('utf-8')
 
-    proc = subprocess.run(command1, shell=True, stdout=PIPE, stderr=PIPE)
-    results = proc.stdout.decode('utf-8').splitlines()
+
+def _get_device_list():
+    command1 = "v4l2-ctl --list-devices"
+    results = _execute_shell_command(command1).splitlines()
 
     device_path_string = '/dev/video'
     csi_camera_string = 'imx219'
@@ -27,11 +35,10 @@ def get_device_list():
 
 
 def get_device_id(camera_mode):
-
     if not ((camera_mode == 'csi') or (camera_mode == 'usb')):
         raise RuntimeError('Wrong parameter.')
 
-    device_list = get_device_list().split()
+    device_list = _get_device_list().split()
     if len(device_list) == 0:
         raise RuntimeError('No device detected.')
     
@@ -43,6 +50,30 @@ def get_device_id(camera_mode):
 
     return ret
 
+
+def get_formats(device_id):
+    command = 'v4l2-ctl -d {} --list-formats-ext'.format(device_id)
+    entire_result = _execute_shell_command(command)
+    formats = re.split("\n\n", entire_result)
+    ret = []
+
+    for i in range(len(formats) - 1):
+        ret += [CaptureFormatInfo(formats[i] + '\n')]
+
+    return ret
+
+
+def get_format(device_id, format_index=None):
+    formats = get_formats(device_id)
+    if format_index != None:
+        return formats[format_index]
+    else:
+        ret = formats[0]
+        for format_ in formats:
+            if format_ > ret:
+                ret = format_
+    return ret
+                
 
 if __name__ == '__main__':
     print(get_device_list())

@@ -1,5 +1,5 @@
 from jetcam.usb_camera import USBCamera
-from device_check import get_device_id
+from device_check import get_device_id, get_format
 
 
 class MyCamera(USBCamera):
@@ -12,9 +12,11 @@ class MyCamera(USBCamera):
     def _gst_str(self):
         if self._camera_mode == 'usb':
             cap_device = get_device_id('usb')[0]
-            cap_orig_width = 1920
-            cap_orig_height = 1080
-            cap_fps = 30
+            format_ = get_format(cap_device)
+            resolution = format_.resolution()
+            cap_orig_width = int(resolution[0])
+            cap_orig_height = int(resolution[1])
+            cap_fps = int(float(resolution[2]))
             crop_height = int((cap_orig_width - self.capture_height) / 2)
             crop_width = int((cap_orig_height- self.capture_width) / 2)
             string = 'v4l2src device=/dev/video{} ' \
@@ -26,8 +28,10 @@ class MyCamera(USBCamera):
                 + '! appsink'
         elif self._camera_mode == 'csi':
             cap_device = get_device_id('csi')[0]
-            cap_orig_width = 1280
-            cap_orig_height = 720
+            format_ = get_format(cap_device)
+            resolution = format_.resolution()
+            cap_orig_width = int(resolution[0])
+            cap_orig_height = int(resolution[1])
             crop_top = int((cap_orig_height - self.capture_height) / 2)
             if crop_top < 0:
                 crop_top = 0
