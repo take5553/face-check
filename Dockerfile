@@ -39,6 +39,7 @@ RUN apt update \
     && apt install -y --no-install-recommends \
            nano \
            python3-tk \
+           v4l-utils \
     && rm -rf /var/lib/apt/lists/* \
     && apt clean
         
