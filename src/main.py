@@ -11,13 +11,11 @@ class Application(ttk.Frame):
         self.captureWindow = None
         self.create_widgets()
 
-        self.cap_device = 1
         self.cap_width = 540
         self.cap_height = 860
-        self.cap_fps = 30
         self.delay = 15
 
-        self.camera = MyCamera(capture_device=self.cap_device, capture_fps=self.cap_fps, capture_width=self.cap_width, capture_height=self.cap_height, width=self.cap_width, height=self.cap_height)
+        self.camera = MyCamera(camera_mode='csi', capture_width=self.cap_width, capture_height=self.cap_height, width=self.cap_width, height=self.cap_height)
 
     def create_widgets(self):
 
@@ -30,7 +28,7 @@ class Application(ttk.Frame):
     def ShowCapture(self):
         if self.captureWindow == None or not self.captureWindow.winfo_exists():
             self.captureWindow = tk.Toplevel()
-            self.capture = CaptureWindow(master=self.captureWindow, camera=self.camera, cap_device=self.cap_device, cap_width=self.cap_width, cap_height=self.cap_height, delay=self.delay)
+            self.capture = CaptureWindow(master=self.captureWindow, camera=self.camera, cap_width=self.cap_width, cap_height=self.cap_height, delay=self.delay)
             
 if __name__ == "__main__":
     window = tk.Tk()
