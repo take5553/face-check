@@ -19,8 +19,8 @@ class MyCamera(USBCamera):
             cap_fps = int(float(resolution[2]))
             crop_height = int((cap_orig_width - self.capture_height) / 2)
             crop_width = int((cap_orig_height- self.capture_width) / 2)
-            string = 'v4l2src device=/dev/video{} ' \
-                + '! image/jpeg,width=(int){},height=(int){},framerate=(fraction){}/1 '.format(cap_device, cap_orig_width, cap_orig_height, cap_fps) \
+            string = 'v4l2src device=/dev/video{} '.format(cap_device) \
+                + '! image/jpeg,width=(int){},height=(int){},framerate=(fraction){}/1 '.format(cap_orig_width, cap_orig_height, cap_fps) \
                 + '! jpegdec ' \
                 + '! videoflip method=upper-left-diagonal ' \
                 + '! videocrop top={} bottom={} left={} right={} '.format(crop_height, crop_height, crop_width, crop_width) \
