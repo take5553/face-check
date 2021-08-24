@@ -1,21 +1,25 @@
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
-from capture_window import CaptureWindow
+from w_capture import CaptureWindow
+from w_config import ConfigWindow
 from mycamera import MyCamera
+
 
 class Application(ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
         self._capture_window = None
+        self._config_window = None
         self._create_widgets()
 
+        self._camera_mode = 'usb'
         self._cap_width = 600
         self._cap_height = 860
         self._delay = 15
 
-        self._camera = MyCamera(camera_mode='usb', capture_width=self._cap_width, capture_height=self._cap_height, width=self._cap_width, height=self._cap_height)
+        self._camera = MyCamera(camera_mode=self._camera_mode, capture_width=self._cap_width, capture_height=self._cap_height, width=self._cap_width, height=self._cap_height)
 
     def _create_widgets(self):
 
@@ -39,7 +43,7 @@ class Application(ttk.Frame):
     def _show_config(self):
         if self._config_window == None or not self._config_window.winfo_exists():
             self._config_window = tk.Toplevel()
-            
+            self._config = ConfigWindow(master=self._config_window, camera_mode=self._camera_mode)
             
 if __name__ == "__main__":
     window = tk.Tk()

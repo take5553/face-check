@@ -48,7 +48,7 @@ def get_device_id(camera_mode):
         if mode == camera_mode:
             ret += id + ' '
 
-    return ret
+    return ret.split()
 
 
 def get_formats(device_id):
