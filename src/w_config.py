@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import re
-from ..util import device_check as dc
+import device_check as dc
 
 
 class ConfigWindow(ttk.Frame):
@@ -29,6 +29,12 @@ class ConfigWindow(ttk.Frame):
         self._combo1 = ttk.Combobox(self._frame2, state="readonly", width=30)
         self._combo1.bind("<<ComboboxSelected>>", self._combo1_on_selected)
         self._combo1.grid()
+        
+        # Save Button
+        self._frame3 = ttk.Frame(self)
+        self._frame3.grid(column=1, row=1, padx=10, pady=10, sticky=tk.E)
+        self._button1 = ttk.Button(self._frame3, text="Save", command=self._save)
+        self._button1.grid()
 
 
     def _set_combo_values(self):
@@ -49,6 +55,9 @@ class ConfigWindow(ttk.Frame):
         resolution = self._resolutions[e.widget.current()]
         # TODO: output selected resolution into a file (or something)
         print(resolution)
+        
+    def _save(self):
+        pass
 
 
 if __name__ == "__main__":
