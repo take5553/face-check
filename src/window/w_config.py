@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-import device_check as dc
 import re
+from ..util import device_check as dc
 
 
 class ConfigWindow(ttk.Frame):
@@ -53,5 +53,5 @@ class ConfigWindow(ttk.Frame):
 
 if __name__ == "__main__":
     window = tk.Tk()
-    app = ConfigWindow(master=window, device_id=1)
+    app = ConfigWindow(master=window, camera_mode='usb')
     app.mainloop()

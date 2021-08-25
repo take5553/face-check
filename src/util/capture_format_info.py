@@ -2,12 +2,12 @@ import re
 
 class CaptureFormatInfo:
     def __init__(self, format_info_string):
-        self._index = re.search("Index.*: (\d+)", format_info_string)[1]
-        tmp = re.search("Pixel Format: ('(.+)'.*)\n", format_info_string)
+        self._index = re.search(r"Index.*: (\d+)", format_info_string)[1]
+        tmp = re.search(r"Pixel Format: ('(.+)'.*)\n", format_info_string)
         self._format_fullname = tmp[1]
         self._format_name = tmp[2]
-        self._format_description = re.search("Name.*: (.+)\n", format_info_string)[1]
-        self._format_resolutions = re.findall("Size: Discrete (.+)x(.+)\n.*\((\d+\.\d+) fps\)\n", format_info_string)
+        self._format_description = re.search(r"Name.*: (.+)\n", format_info_string)[1]
+        self._format_resolutions = re.findall(r"Size: Discrete (.+)x(.+)\n.*\((\d+\.\d+) fps\)\n", format_info_string)
 
     @property
     def index(self):

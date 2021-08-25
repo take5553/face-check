@@ -14,7 +14,7 @@ class Application(ttk.Frame):
         self._config_window = None
         self._create_widgets()
 
-        self._camera_mode = 'usb'
+        self._camera_mode = 'csi'
         self._cap_width = 600
         self._cap_height = 860
         self._delay = 15

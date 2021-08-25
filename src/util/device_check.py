@@ -1,7 +1,8 @@
 import subprocess
 import re
-from capture_format_info import CaptureFormatInfo
 from subprocess import PIPE
+
+from capture_format_info import CaptureFormatInfo
 
 
 def _execute_shell_command(command):
@@ -76,7 +77,7 @@ def get_format(device_id, format_index=None):
                 
 
 if __name__ == '__main__':
-    print(get_device_list())
+    print(_get_device_list())
     try:
         print('csi camera id: ' + get_device_id('csi'))
     except:

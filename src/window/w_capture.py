@@ -78,7 +78,7 @@ class CaptureWindow(ttk.Frame):
     def _capture_images(self):
         if self._cap_im_fl == True:
             self._cap_im_fl = False
-        self._cap_ims_fl = not self._cap_ims
+        self._cap_ims_fl = not self._cap_ims_fl
         if self._cap_ims_fl == True:
             self._im_dir = 'Takeshi/train/'
             self._get_index()
@@ -90,7 +90,7 @@ class CaptureWindow(ttk.Frame):
     def _update(self):
         frame = self._camera.value
         if (self._cap_im_fl == True) or (self._cap_ims_fl == True):
-            cv2.imwrite('{}{}{:04}{}'.format(self._abspath + self._im_dir, self._fileprefix, self._image_index, self._fileext), frame)
+            cv2.imwrite('{}{}{:04}{}'.format(self._abspath + self._im_dir, self._file_prefix, self._image_index, self._file_ext), frame)
             self._image_index += 1
             if (self._cap_im_fl == True):
                 self._cap_im_fl = False
