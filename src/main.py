@@ -43,7 +43,7 @@ class Application(ttk.Frame):
     def _show_config(self):
         if self._config_window == None or not self._config_window.winfo_exists():
             self._config_window = tk.Toplevel()
-            self._config = ConfigWindow(master=self._config_window, camera_mode=self._camera_mode)
+            self._config = ConfigWindow(master=self._config_window)
             
 if __name__ == "__main__":
     window = tk.Tk()
