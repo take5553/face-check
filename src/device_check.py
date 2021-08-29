@@ -1,5 +1,5 @@
-import subprocess
 import re
+import subprocess
 from subprocess import PIPE
 
 from capture_format_info import CaptureFormatInfo
