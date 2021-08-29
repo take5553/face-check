@@ -1,5 +1,6 @@
 import json
 import os
+from device_check import get_device_id, get_format
 
 target_path = os.path.join(os.path.dirname(__file__), 'setting.json')
 
@@ -8,6 +9,26 @@ def save(settings):
         json.dump(settings, f, indent=4)
 
 def load():
-    with open(target_path, 'r') as f:
-        d = json.load(f)
+    if os.path.exists(target_path):
+        with open(target_path, 'r') as f:
+            d = json.load(f)
+    else:
+        cap_device = get_device_id('usb')[0]
+        format_ = get_format(cap_device)
+        resolution = format_.resolution()
+        d = {
+            'camera_mode': 'usb',
+            'cap_settings' : {
+                'cap_mode' : format_.name,
+                'cap_width' : int(resolution[0]),
+                'cap_height' : int(resolution[1]),
+                'cap_fps' : float(resolution[2])
+            },
+            'canvas_settings' : {
+                'canvas_width' : 600,
+                'canvas_height' : 860,
+                'update_interval' : 15,
+                'portrait' : True
+            }
+        }
     return d

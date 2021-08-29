@@ -1,9 +1,10 @@
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
+import json_util as ju
+from mycamera import MyCamera
 from w_capture import CaptureWindow
 from w_config import ConfigWindow
-from mycamera import MyCamera
 
 
 class Application(ttk.Frame):
@@ -13,13 +14,10 @@ class Application(ttk.Frame):
         self._capture_window = None
         self._config_window = None
         self._create_widgets()
+        
+        self._settings = ju.load()
 
-        self._camera_mode = 'csi'
-        self._cap_width = 600
-        self._cap_height = 860
-        self._delay = 15
-
-        self._camera = MyCamera(camera_mode=self._camera_mode, capture_width=self._cap_width, capture_height=self._cap_height, width=self._cap_width, height=self._cap_height)
+        self._camera = MyCamera(width=self._settings['canvas_settings']['canvas_width'], height=self._settings['canvas_settings']['canvas_height'])
 
     def _create_widgets(self):
 
@@ -38,7 +36,12 @@ class Application(ttk.Frame):
     def _show_capture(self):
         if self._capture_window == None or not self._capture_window.winfo_exists():
             self._capture_window = tk.Toplevel()
-            self._capture = CaptureWindow(master=self._capture_window, camera=self._camera, cap_width=self._cap_width, cap_height=self._cap_height, delay=self._delay)
+            self._capture = CaptureWindow(master=self._capture_window, 
+                                          camera=self._camera, 
+                                          can_width=self._settings['canvas_settings']['canvas_width'], 
+                                          can_height= self._settings['canvas_settings']['canvas_height'],
+                                          delay=self._settings['canvas_settings']['update_interval']
+                                          )
     
     def _show_config(self):
         if self._config_window == None or not self._config_window.winfo_exists():

@@ -6,7 +6,7 @@ import PIL.Image, PIL.ImageTk
 import os
 
 class CaptureWindow(ttk.Frame):
-    def __init__(self, master=None, camera=None, cap_device=0, cap_width=352, cap_height=288, delay=10):
+    def __init__(self, master=None, camera=None, cap_device=0, can_width=352, can_height=288, delay=10):
         super().__init__(master)
         self._camera = camera
         self.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
@@ -15,8 +15,8 @@ class CaptureWindow(ttk.Frame):
         self.master.rowconfigure(0, weight=1)
 
         self._cap_device = cap_device
-        self._cap_width = cap_width
-        self._cap_height = cap_height
+        self._canvas_width = can_width
+        self._canvas_height = can_height
         self._delay = delay
 
         self._create_widgets()
@@ -32,7 +32,7 @@ class CaptureWindow(ttk.Frame):
         self._cap_ims_fl = False
 
         if self._camera == None:
-            self._camera = USBCamera(capture_device=self._cap_device, capture_width=self._cap_width, capture_height=self._cap_height, width=self._cap_width, height=self._cap_height)
+            self._camera = USBCamera(capture_device=self._cap_device, capture_width=self._canvas_width, capture_height=self._canvas_height, width=self._canvas_width, height=self._canvas_height)
         self._camera.running = True
         self.master.protocol("WM_DELETE_WINDOW", self._on_closing)
         self._update()
@@ -40,7 +40,7 @@ class CaptureWindow(ttk.Frame):
     def _create_widgets(self):
 
         #Canvas
-        self._canvas1 = tk.Canvas(self, width = self._cap_width, height = self._cap_height)
+        self._canvas1 = tk.Canvas(self, width = self._canvas_width, height = self._canvas_height)
         self._canvas1.grid(column=0, row=0, sticky=(tk.W, tk.E))
 
         #Button Frame

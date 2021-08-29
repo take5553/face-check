@@ -78,7 +78,7 @@ class ConfigWindow(ttk.Frame):
         self._frame_can.rowconfigure(3, minsize=20)
         
         self._label_can_por = ttk.Label(self._frame_can, text="Portrait mode:")
-        self._label_can_por.grid(column=0, row=4)
+        self._label_can_por.grid(column=0, row=4, sticky=tk.W)
         self._check_can_por = ttk.Checkbutton(self._frame_can, text="On")
         self._check_can_por.grid(column=1, row=4, padx=5, sticky=tk.W)
         
@@ -95,9 +95,15 @@ class ConfigWindow(ttk.Frame):
         
         # Save
         column = 0
+        
         column += 1
-        self._button_sav = ttk.Button(self, text="Save", command=self._save)
-        self._button_sav.grid(column=column, row=row, padx=10, pady=10, sticky=tk.E)
+        self._frame_sav = ttk.Frame(self)
+        self._frame_sav.grid(column=column, row=row, padx=10, pady=10, sticky=tk.E)
+        self._label_sav = ttk.Label(self._frame_sav)
+        self._label_sav.grid(column=0, row=0, padx=20, sticky=tk.E)
+        self._button_sav = ttk.Button(self._frame_sav, text="Save", command=self._save)
+        self._button_sav.grid(column=1, row=0)
+        self._frame_sav.columnconfigure(0, weight=1)
         row += 1
         
         
@@ -130,6 +136,7 @@ class ConfigWindow(ttk.Frame):
                 break
         else:
             self._combo_res.current(0)
+        self._selected_resolution = self._resolutions[self._combo_res.current()]
 
 
     def _combo_res_on_selected(self, e):
@@ -158,6 +165,8 @@ class ConfigWindow(ttk.Frame):
             }
         }
         ju.save(settings)
+        self._label_sav.configure(text="Save OK")
+        self.master.after(2000, lambda: self._label_sav.configure(text=""))
 
 
 if __name__ == "__main__":
