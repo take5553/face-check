@@ -14,59 +14,56 @@ class ConfigWindow(ttk.Frame):
         self._camera_mode = camera_mode
 
         self._create_widgets()
-        self._set_combo2_values()
-        self._set_combo1_values()
+        self._set_combo_dev_values()
+        self._set_combo_res_values()
 
 
     def _create_widgets(self):
         
-        # Device Label
-        self._frame4 = ttk.Frame(self)
-        self._frame4.grid(column=0, row=0, padx=10, pady=10)
-        self._label3 = ttk.Label(self._frame4, text="Device")
-        self._label3.grid()
+        row = 0
         
-        # Device ComboBox
-        self._frame5 = ttk.Frame(self)
-        self._frame5.grid(column=1, row=0, padx=10, pady=10)
-        self._combo2 = ttk.Combobox(self._frame5, state="readonly", width=30)
-        self._combo2.bind("<<ComboboxSelected>>", self._combo2_on_selected)
-        self._combo2.grid()
-
-        # Resolution Label
-        self._frame1 = ttk.Frame(self)
-        self._frame1.grid(column=0, row=1, padx=10, pady=10)
-        self._label1 = ttk.Label(self._frame1, text="Resolution")
-        self._label1.grid()
+        # Device
+        column = 0
+        self._label_dev = ttk.Label(self, text="Device")
+        self._label_dev.grid(column=column, row=row, padx=10, pady=10)
+        column += 1
+        self._combo_dev = ttk.Combobox(self, state="readonly", width=30)
+        self._combo_dev.bind("<<ComboboxSelected>>", self._combo_dev_on_selected)
+        self._combo_dev.grid(column=column, row=row, padx=10, pady=10)
+        row += 1
         
-        # Resolution ComboBox
-        self._frame2 = ttk.Frame(self)
-        self._frame2.grid(column=1, row=1, padx=10, pady=10)
-        self._combo1 = ttk.Combobox(self._frame2, state="readonly", width=30)
-        self._combo1.bind("<<ComboboxSelected>>", self._combo1_on_selected)
-        self._combo1.grid()
+        # Resolution
+        column = 0
+        self._label_res = ttk.Label(self, text="Resolution")
+        self._label_res.grid(column=column, row=row, padx=10, pady=10)
+        column += 1
+        self._combo_res = ttk.Combobox(self, state="readonly", width=30)
+        self._combo_res.bind("<<ComboboxSelected>>", self._combo_res_on_selected)
+        self._combo_res.grid(column=column, row=row, padx=10, pady=10)
+        row += 1
         
-        # Save Button
-        self._frame3 = ttk.Frame(self)
-        self._frame3.grid(column=1, row=2, padx=10, pady=10, sticky=tk.E)
-        self._button1 = ttk.Button(self._frame3, text="Save", command=self._save)
-        self._button1.grid()
+        # Save
+        column = 0
+        column += 1
+        self._button_sav = ttk.Button(self, text="Save", command=self._save)
+        self._button_sav.grid(column=column, row=row, padx=10, pady=10, sticky=tk.E)
+        row += 1
         
         
-    def _set_combo2_values(self):
+    def _set_combo_dev_values(self):
         cameras = ['usb', 'csi']
-        self._combo2.configure(values=cameras)
+        self._combo_dev.configure(values=cameras)
         if self._camera_mode == None:
-            self._combo2.current(0)
+            self._combo_dev.current(0)
             self._camera_mode = cameras[0]
         else:
             if self._camera_mode == cameras[0]:
-                self._combo2.current(0)
+                self._combo_dev.current(0)
             else:
-                self._combo2.current(1)
+                self._combo_dev.current(1)
 
 
-    def _set_combo1_values(self):
+    def _set_combo_res_values(self):
         values = []
         self._resolutions = []
         device_id = dc.get_device_id(self._camera_mode)[0]
@@ -75,17 +72,17 @@ class ConfigWindow(ttk.Frame):
             for resolution in format_.resolutions:
                 values += ['{} : {}x{} ({} fps)'.format(format_.name, resolution[0], resolution[1], resolution[2])]
                 self._resolutions += [(format_.name, resolution[0], resolution[1], resolution[2])]
-        self._combo1.configure(values=values)
+        self._combo_res.configure(values=values)
 
 
-    def _combo1_on_selected(self, e):
+    def _combo_res_on_selected(self, e):
         self._selected_resolution = self._resolutions[e.widget.current()]
         print('selected resolution: {}'.format(self._selected_resolution))
         
         
-    def _combo2_on_selected(self, e):
+    def _combo_dev_on_selected(self, e):
         self._camera_mode = e.widget.get()
-        self._set_combo1_values()
+        self._set_combo_res_values()
         
         
     def _save(self):
