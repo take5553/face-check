@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import re
 import device_check as dc
+import gst_builder
 import json_util as ju
 
 
@@ -75,13 +76,6 @@ class ConfigWindow(ttk.Frame):
         self._label_can_fpsunit = ttk.Label(self._frame_can_fps, text="ms")
         self._label_can_fpsunit.grid(column=1, row=0)
         
-        self._frame_can.rowconfigure(3, minsize=20)
-        
-        self._label_can_por = ttk.Label(self._frame_can, text="Portrait mode:")
-        self._label_can_por.grid(column=0, row=4, sticky=tk.W)
-        self._check_can_por = ttk.Checkbutton(self._frame_can, text="On")
-        self._check_can_por.grid(column=1, row=4, padx=5, sticky=tk.W)
-        
         vcmd = (self.register(lambda target: target.isdecimal() or len(target) == 0), '%P')
         self._canvas_width_var = tk.IntVar(value=self._settings['canvas_settings']['canvas_width'])
         self._entry_can_width.configure(textvariable=self._canvas_width_var, validate='key', validatecommand=vcmd)
@@ -89,8 +83,6 @@ class ConfigWindow(ttk.Frame):
         self._entry_can_height.configure(textvariable=self._canvas_height_var, validate='key', validatecommand=vcmd)
         self._canvas_fps_var = tk.IntVar(value=self._settings['canvas_settings']['update_interval'])
         self._entry_can_fps.configure(textvariable=self._canvas_fps_var, validate='key', validatecommand=vcmd)
-        self._canvas_por_var = tk.BooleanVar(value=self._settings['canvas_settings']['portrait'])
-        self._check_can_por.configure(variable=self._canvas_por_var)
         row += 1
         
         # Save
@@ -160,10 +152,10 @@ class ConfigWindow(ttk.Frame):
             'canvas_settings' : {
                 'canvas_width' : self._canvas_width_var.get(),
                 'canvas_height' : self._canvas_height_var.get(),
-                'update_interval' : self._canvas_fps_var.get(),
-                'portrait' : self._canvas_por_var.get()
+                'update_interval' : self._canvas_fps_var.get()
             }
         }
+        settings['gst_str'] = gst_builder.get_gst(settings)
         ju.save(settings)
         self._label_sav.configure(text="Save OK")
         self.master.after(2000, lambda: self._label_sav.configure(text=""))
