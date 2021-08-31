@@ -12,8 +12,8 @@ def get_gst(settings):
             string += ' ! image/jpeg,width=(int){},height=(int){},framerate=(fraction){}/1 ! jpegdec' \
                 .format(settings['cap_settings']['cap_width'], settings['cap_settings']['cap_height'], int(settings['cap_settings']['cap_fps']))
         else:
-            string += ' ! video/x-raw,width=(int){},height=(int)={},framerate=(fraction){}/1' \
-                .format(settings['cap_settings']['cap_width'], settings['cap_settings']['cap_height'], settings['cap_settings']['cap_fps'])
+            string += ' ! video/x-raw,width=(int){},height=(int){},framerate=(fraction){}/1' \
+                .format(settings['cap_settings']['cap_width'], settings['cap_settings']['cap_height'], int(settings['cap_settings']['cap_fps']))
         # Flip and Crop (with 90 degree rotatation or just flipping horizontally)
         if with_rotate:
             string += ' ! videoflip method=upper-left-diagonal'

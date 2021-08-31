@@ -1,6 +1,7 @@
 import json
 import os
 from device_check import get_device_id, get_format
+import gst_builder
 
 target_path = os.path.join(os.path.dirname(__file__), 'setting.json')
 
@@ -31,4 +32,7 @@ def load():
                 'portrait' : True
             }
         }
+        gst_str = gst_builder.get_gst(d)
+        d['gst_str'] = gst_str
+        save(d)
     return d

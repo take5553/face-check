@@ -13,11 +13,9 @@ class Application(ttk.Frame):
         self.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
         self._capture_window = None
         self._config_window = None
+        self._camera = None
         self._create_widgets()
         
-        self._settings = ju.load()
-
-        self._camera = MyCamera(width=self._settings['canvas_settings']['canvas_width'], height=self._settings['canvas_settings']['canvas_height'])
 
     def _create_widgets(self):
 
@@ -33,7 +31,12 @@ class Application(ttk.Frame):
         self._button2 = ttk.Button(self._frame2, text="Config", command=self._show_config)
         self._button2.grid()
 
+
     def _show_capture(self):
+        self._settings = ju.load()
+        if self._camera != None:
+            self._camera.cap.release()
+        self._camera = MyCamera(width=self._settings['canvas_settings']['canvas_width'], height=self._settings['canvas_settings']['canvas_height'])
         if self._capture_window == None or not self._capture_window.winfo_exists():
             self._capture_window = tk.Toplevel()
             self._capture = CaptureWindow(master=self._capture_window, 
@@ -42,12 +45,14 @@ class Application(ttk.Frame):
                                           can_height= self._settings['canvas_settings']['canvas_height'],
                                           delay=self._settings['canvas_settings']['update_interval']
                                           )
-    
+
+
     def _show_config(self):
         if self._config_window == None or not self._config_window.winfo_exists():
             self._config_window = tk.Toplevel()
             self._config = ConfigWindow(master=self._config_window)
-            
+
+
 if __name__ == "__main__":
     window = tk.Tk()
     app = Application(master=window)
