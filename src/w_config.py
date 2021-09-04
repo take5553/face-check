@@ -15,8 +15,6 @@ class ConfigWindow(ttk.Frame):
         
         self._settings = ju.load()
 
-        self._camera_mode = self._settings['camera_mode']
-
         self._create_widgets()
         self._set_combo_dev_values()
         self._set_combo_res_values()
@@ -140,7 +138,7 @@ class ConfigWindow(ttk.Frame):
     def _set_combo_dev_values(self):
         cameras = ['usb', 'csi']
         self._combo_dev.configure(values=cameras)
-        if self._camera_mode == cameras[0]:
+        if self._settings['camera_mode'] == cameras[0]:
             self._combo_dev.current(0)
         else:
             self._combo_dev.current(1)
@@ -149,13 +147,14 @@ class ConfigWindow(ttk.Frame):
     def _set_combo_res_values(self):
         values = []
         self._resolutions = []
-        device_id = dc.get_device_id(self._camera_mode)[0]
+        device_id = dc.get_device_id(self._settings['camera_mode'])[0]
         formats = dc.get_formats(device_id)
         for format_ in formats:
             for resolution in format_.resolutions:
                 values += ['{} : {}x{} ({} fps)'.format(format_.name, resolution[0], resolution[1], resolution[2])]
                 self._resolutions += [(format_.name, resolution[0], resolution[1], resolution[2])]
         self._combo_res.configure(values=values)
+        
         setting_str = '{} : {}x{} ({:.3f} fps)'.format(self._settings['cap_settings']['cap_mode'], 
                                                        self._settings['cap_settings']['cap_width'], 
                                                        self._settings['cap_settings']['cap_height'], 
@@ -166,7 +165,7 @@ class ConfigWindow(ttk.Frame):
                 break
         else:
             self._combo_res.current(0)
-        self._selected_resolution = self._resolutions[self._combo_res.current()]
+            self._set_selected_resolution(0)
 
 
     def _set_combo_rot_values(self):
@@ -179,12 +178,21 @@ class ConfigWindow(ttk.Frame):
 
 
     def _combo_dev_on_selected(self, e):
-        self._camera_mode = e.widget.get()
+        self._settings['camera_mode'] = e.widget.get()
         self._set_combo_res_values()
 
 
     def _combo_res_on_selected(self, e):
-        self._selected_resolution = self._resolutions[e.widget.current()]
+        self._set_selected_resolution(e.widget.current())
+        
+    
+    def _set_selected_resolution(self, index):
+        self._settings['cap_settings'] = {
+                'cap_mode' : self._resolutions[index][0],
+                'cap_width' : int(self._resolutions[index][1]),
+                'cap_height' : int(self._resolutions[index][2]),
+                'cap_fps' : float(self._resolutions[index][3])
+            }
         
         
     def _combo_rot_on_selected(self, e):
@@ -196,22 +204,13 @@ class ConfigWindow(ttk.Frame):
         
         
     def _save(self):
-        settings = {
-            'camera_mode': self._camera_mode,
-            'cap_settings' : {
-                'cap_mode' : self._selected_resolution[0],
-                'cap_width' : int(self._selected_resolution[1]),
-                'cap_height' : int(self._selected_resolution[2]),
-                'cap_fps' : float(self._selected_resolution[3])
-            },
-            'canvas_settings' : {
-                'canvas_width' : self._canvas_width_var.get(),
-                'canvas_height' : self._canvas_height_var.get(),
-                'update_interval' : self._canvas_fps_var.get()
-            }
+        self._settings['canvas_settings'] = {
+            'canvas_width' : self._canvas_width_var.get(),
+            'canvas_height' : self._canvas_height_var.get(),
+            'update_interval' : self._canvas_fps_var.get()
         }
-        settings['gst_str'] = gst_builder.get_gst(settings)
-        ju.save(settings)
+        self._settings['gst_str'] = gst_builder.get_gst(self._settings)
+        ju.save(self._settings)
         self._label_sav.configure(text="Save OK")
         self.master.after(2000, lambda: self._label_sav.configure(text=""))
 

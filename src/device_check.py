@@ -79,10 +79,12 @@ def get_format(device_id, format_index=None):
 if __name__ == '__main__':
     print(_get_device_list())
     try:
-        print('csi camera id: ' + get_device_id('csi'))
+        for id in get_device_id('csi'):
+            print('csi camera id: ' + id)
     except:
         print('No csi camera detected.')
     try:
-        print('usb camera id: ' + get_device_id('usb'))
+        for id in get_device_id('usb'):
+            print('usb camera id: ' + id)
     except:
         print('No usb camera detected.')
