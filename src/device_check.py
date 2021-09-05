@@ -13,7 +13,8 @@ def _execute_shell_command(command):
     return proc.stdout.decode('utf-8')
 
 
-def _get_device_list():
+def get_device_list():
+    # return '':nothing, '0:csi ' or '0:csi 1:usb '
     command1 = "v4l2-ctl --list-devices"
     results = _execute_shell_command(command1).splitlines()
 
@@ -39,7 +40,7 @@ def get_device_id(camera_mode):
     if not ((camera_mode == 'csi') or (camera_mode == 'usb')):
         raise RuntimeError('Wrong parameter.')
 
-    device_list = _get_device_list().split()
+    device_list = get_device_list().split()
     if len(device_list) == 0:
         raise RuntimeError('No device detected.')
     
@@ -77,7 +78,7 @@ def get_format(device_id, format_index=None):
                 
 
 if __name__ == '__main__':
-    print(_get_device_list())
+    print(get_device_list())
     try:
         for id in get_device_id('csi'):
             print('csi camera id: ' + id)

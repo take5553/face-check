@@ -78,7 +78,7 @@ class ConfigWindow(ttk.Frame):
         self._label_can = ttk.Label(self, text="Canvas")
         self._label_can.grid(column=column, row=row, padx=padx, pady=pady)
         column += 1
-        self._label_can_wxh = ttk.Label(self, text="Width x Height:")
+        self._label_can_wxh = ttk.Label(self, text="Width x Height")
         self._label_can_wxh.grid(column=column, row=row, padx=padx, pady=pady)
         column += 1
         self._frame_can_wxh = ttk.Frame(self)
@@ -96,7 +96,7 @@ class ConfigWindow(ttk.Frame):
         column = 0
         # blank cell
         column += 1
-        self._label_can_fps = ttk.Label(self, text="Update Interval:")
+        self._label_can_fps = ttk.Label(self, text="Update Interval")
         self._label_can_fps.grid(column=column, row=row, padx=padx, pady=pady)
         column += 1
         self._frame_can_fps = ttk.Frame(self)
@@ -136,18 +136,29 @@ class ConfigWindow(ttk.Frame):
 
         
     def _set_combo_dev_values(self):
-        cameras = ['usb', 'csi']
+        result = dc.get_device_list()
+        if result == '':
+            return
+        device_list = result.split()
+        cameras = []
+        for device in device_list:
+            _, device_name = device.split(':')
+            cameras += [device_name]
         self._combo_dev.configure(values=cameras)
-        if self._settings['camera_mode'] == cameras[0]:
-            self._combo_dev.current(0)
+        for i in range(len(cameras)):
+            if self._settings['camera_mode'] == cameras[i]:
+                self._combo_dev.current(i)
+                break
         else:
-            self._combo_dev.current(1)
+            self._combo_dev.current(0)
 
 
     def _set_combo_res_values(self):
+        if self._combo_dev.get() == '':
+            return
         values = []
         self._resolutions = []
-        device_id = dc.get_device_id(self._settings['camera_mode'])[0]
+        device_id = dc.get_device_id(self._combo_dev.get())[0]
         formats = dc.get_formats(device_id)
         for format_ in formats:
             for resolution in format_.resolutions:
