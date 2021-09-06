@@ -25,41 +25,67 @@ class CaptureWindow(ttk.Frame):
         
         self._cap_im_fl = False
         self._abspath = os.path.dirname(os.path.abspath(__file__)) + "/data/"
-        self._im_dir = "one_shot/"
         self._file_prefix = "capture"
         self._file_ext = ".jpg"
         self._image_index = 0
-        self._get_index()
         
         self._cap_ims_fl = False
 
         self._camera.running = True
         self.master.protocol("WM_DELETE_WINDOW", self._on_closing)
         self._update()
+        
 
     def _create_widgets(self):
 
-        #Canvas
+        # Canvas
         self._canvas1 = tk.Canvas(self, width = self._canvas_width, height = self._canvas_height)
         self._canvas1.grid(column=0, row=0, sticky=(tk.W, tk.E))
 
-        #Button Frame
+        # Button Frame
         self._frame1 = ttk.Frame(self)
         self._frame1.grid(column=0, row=1, sticky=(tk.W, tk.E))
 
-        #One Image Button
-        self._button1 = ttk.Button(self._frame1, text="Take a pic", command=self._one_capture)
-        self._button1.grid(column=0, row=0, padx=60, pady=40, ipady=20, sticky=(tk.W, tk.E))
+        # One Image Button
+        self._button_image = ttk.Button(self._frame1, text="Take a pic", command=self._one_capture)
+        self._button_image.grid(column=0, row=0, padx=10, pady=10, sticky=(tk.W, tk.E))
 
-        #Images Button
-        self._button2 = ttk.Button(self._frame1, text="Continous images", command=self._capture_images)
-        self._button2.grid(column=1, row=0, padx=60, pady=40, ipady=20, sticky=(tk.W, tk.E))
+        # Images Button
+        self._button_images = ttk.Button(self._frame1, text="Continous images", command=self._capture_images)
+        self._button_images.grid(column=1, row=0, padx=10, pady=10, sticky=(tk.W, tk.E))
+        
+        # Image Name
+        self._frame_name = ttk.Frame(self._frame1)
+        self._frame_name.grid(column=0, row=1, padx=10, pady=10, sticky=(tk.W, tk.E))
+        self._label_name = ttk.Label(self._frame_name, text='Data Name')
+        self._label_name.grid(column=0, row=0)
+        self._entry_name = ttk.Entry(self._frame_name)
+        self._entry_name.grid(column=1, row=0, sticky=(tk.W, tk.E))
+        
+        # Save State
+        self._frame_save_state = ttk.Frame(self._frame1)
+        self._frame_save_state.grid(column=1, row=1, padx=10, pady=10, sticky=(tk.W, tk.E))
+        self._label_save_state = ttk.Label(self._frame_save_state, text='Taken Pics:')
+        self._label_save_state.grid(column=0, row=0)
+        self._label_save_count = ttk.Label(self._frame_save_state)
+        self._label_save_count.grid(column=1, row=0)
 
         self._frame1.columnconfigure(0, weight=1)
         self._frame1.columnconfigure(1, weight=1)
         self._frame1.rowconfigure(0, weight=1)
+        self._frame_name.columnconfigure(0, weight=1)
+        self._frame_name.columnconfigure(1, weight=1)
+        
+        self._data_name = tk.StringVar()
+        self._entry_name.configure(textvariable=self._data_name)
+        
 
     def _get_index(self):
+        if self._data_name.get() == '':
+            self._im_dir = 'Data1/train/'
+        else:
+            self._im_dir = self._data_name.get() + '/train/'
+        os.makedirs(self._abspath + self._im_dir, exist_ok=True)
         files = os.listdir(self._abspath + self._im_dir)
         files_file = [f for f in files if os.path.isfile(os.path.join(self._abspath + self._im_dir, f))]
         if len(files_file) > 0:
@@ -69,24 +95,26 @@ class CaptureWindow(ttk.Frame):
         else:
             self._image_index = 0
         
+        
     def _one_capture(self):
         if self._cap_ims_fl == False:
             self._cap_im_fl = True
-            self._im_dir = 'one_shot/'
             self._get_index()
+
 
     def _capture_images(self):
         if self._cap_im_fl == True:
             self._cap_im_fl = False
         self._cap_ims_fl = not self._cap_ims_fl
         if self._cap_ims_fl == True:
-            self._im_dir = 'Takeshi/train/'
             self._get_index()
+
 
     def _on_closing(self):
         self._camera.running = False
         self._camera.cap.release()
         self.master.destroy()
+
 
     def _update(self):
         frame = self._camera.value
@@ -98,7 +126,9 @@ class CaptureWindow(ttk.Frame):
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         self._photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(frame))
         self._canvas1.create_image(0, 0, image = self._photo, anchor = tk.NW)
+        self._label_save_count.configure(text=self._image_index)
         self.master.after(self._delay, self._update)
+
 
 if __name__ == "__main__":
     window = tk.Tk()
