@@ -1,6 +1,6 @@
 import json
 import os
-from device_check import get_device_id, get_format
+from device_check import get_device_id, get_format, get_device_list
 import gst_builder
 
 target_path = os.path.join(os.path.dirname(__file__), 'setting.json')
@@ -14,22 +14,26 @@ def load():
         with open(target_path, 'r') as f:
             d = json.load(f)
     else:
-        cap_device = get_device_id('usb')[0]
+        device_str = get_device_list()
+        if device_str == '':
+            raise RuntimeError('No device detected.')
+        _, device = device_str.split()[0].split(':')
+        cap_device = get_device_id(device)[0]
         format_ = get_format(cap_device)
         resolution = format_.resolution()
         d = {
-            'camera_mode': 'usb',
+            'camera_mode': device,
             'cap_settings' : {
                 'cap_mode' : format_.name,
                 'cap_width' : int(resolution[0]),
                 'cap_height' : int(resolution[1]),
-                'cap_fps' : float(resolution[2])
+                'cap_fps' : float(resolution[2]),
+                'cap_rotation' : 0
             },
             'canvas_settings' : {
                 'canvas_width' : 600,
                 'canvas_height' : 860,
-                'update_interval' : 15,
-                'portrait' : True
+                'update_interval' : 15
             }
         }
         gst_str = gst_builder.get_gst(d)

@@ -1,8 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
-import json_util as ju
-from mycamera import MyCamera
 from w_capture import CaptureWindow
 from w_config import ConfigWindow
 
@@ -33,18 +31,9 @@ class Application(ttk.Frame):
 
 
     def _show_capture(self):
-        self._settings = ju.load()
-        if self._camera != None:
-            self._camera.cap.release()
-        self._camera = MyCamera(width=self._settings['canvas_settings']['canvas_width'], height=self._settings['canvas_settings']['canvas_height'])
         if self._capture_window == None or not self._capture_window.winfo_exists():
             self._capture_window = tk.Toplevel()
-            self._capture = CaptureWindow(master=self._capture_window, 
-                                          camera=self._camera, 
-                                          can_width=self._settings['canvas_settings']['canvas_width'], 
-                                          can_height= self._settings['canvas_settings']['canvas_height'],
-                                          delay=self._settings['canvas_settings']['update_interval']
-                                          )
+            self._capture = CaptureWindow(master=self._capture_window)
 
 
     def _show_config(self):

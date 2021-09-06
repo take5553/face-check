@@ -4,20 +4,22 @@ from jetcam.usb_camera import USBCamera
 import cv2
 import PIL.Image, PIL.ImageTk
 import os
+import json_util as ju
+from mycamera import MyCamera
 
 class CaptureWindow(ttk.Frame):
-    def __init__(self, master=None, camera=None, cap_device=0, can_width=352, can_height=288, delay=10):
+    def __init__(self, master=None):
         super().__init__(master)
-        self._camera = camera
+        self._settings = ju.load()
+        self._camera = MyCamera(width=self._settings['canvas_settings']['canvas_width'], height=self._settings['canvas_settings']['canvas_height'])
         self.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
         self.master.title("Capture")
         self.master.columnconfigure(0, weight=1)
         self.master.rowconfigure(0, weight=1)
 
-        self._cap_device = cap_device
-        self._canvas_width = can_width
-        self._canvas_height = can_height
-        self._delay = delay
+        self._canvas_width = self._settings['canvas_settings']['canvas_width']
+        self._canvas_height = self._settings['canvas_settings']['canvas_height']
+        self._delay = self._settings['canvas_settings']['update_interval']
 
         self._create_widgets()
         
@@ -31,8 +33,6 @@ class CaptureWindow(ttk.Frame):
         
         self._cap_ims_fl = False
 
-        if self._camera == None:
-            self._camera = USBCamera(capture_device=self._cap_device, capture_width=self._canvas_width, capture_height=self._canvas_height, width=self._canvas_width, height=self._canvas_height)
         self._camera.running = True
         self.master.protocol("WM_DELETE_WINDOW", self._on_closing)
         self._update()
@@ -85,6 +85,7 @@ class CaptureWindow(ttk.Frame):
 
     def _on_closing(self):
         self._camera.running = False
+        self._camera.cap.release()
         self.master.destroy()
 
     def _update(self):

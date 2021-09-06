@@ -12,3 +12,11 @@ class MyCamera(USBCamera):
     def _gst_str(self):
         settings = ju.load()
         return settings['gst_str']
+    
+    
+    def _read(self):
+        re, image = self.cap.read()
+        if re:
+            return image
+        else:
+            raise RuntimeError('Could not read image from camera')

@@ -19,7 +19,6 @@ class ConfigWindow(ttk.Frame):
         self._set_combo_dev_values()
         self._set_combo_res_values()
         self._set_combo_rot_values()
-        self._set_combo_fli_values()
 
 
     def _create_widgets(self):
@@ -61,17 +60,6 @@ class ConfigWindow(ttk.Frame):
         self._combo_rot = ttk.Combobox(self, state="readonly", width=30)
         self._combo_rot.bind("<<ComboboxSelected>>", self._combo_rot_on_selected)
         self._combo_rot.grid(column=column, row=row, padx=padx, pady=pady)
-        row += 1
-        
-        column = 0
-        # blank cell
-        column += 1
-        self._label_fli = ttk.Label(self, text="Flip")
-        self._label_fli.grid(column=column, row=row, padx=padx, pady=pady)
-        column += 1
-        self._combo_fli = ttk.Combobox(self, state="readonly", width=30)
-        self._combo_fli.bind("<<ComboboxSelected>>", self._combo_fli_on_selected)
-        self._combo_fli.grid(column=column, row=row, padx=padx, pady=pady)
         row += 1
         
         column = 0
@@ -180,13 +168,9 @@ class ConfigWindow(ttk.Frame):
 
 
     def _set_combo_rot_values(self):
-        values = ['None', '90 degrees Clock Wise', '180 degrees Rotation', '90 degrees Counter Clock Wise']
+        values = ['None', '90 degrees counter clock wise', '180 degrees rotation', '90 degrees clock wise', 'Horizontal flip', 'Upper right diagonal flip', 'Vertical flip', 'Upper left diagonal flip']
         self._combo_rot.configure(values=values)
-        
-    
-    def _set_combo_fli_values(self):
-        pass
-
+        self._combo_rot.current(self._settings['cap_settings']['cap_rotation'])
 
     def _combo_dev_on_selected(self, e):
         self._settings['camera_mode'] = e.widget.get()
@@ -198,29 +182,22 @@ class ConfigWindow(ttk.Frame):
         
     
     def _set_selected_resolution(self, index):
-        self._settings['cap_settings'] = {
-                'cap_mode' : self._resolutions[index][0],
-                'cap_width' : int(self._resolutions[index][1]),
-                'cap_height' : int(self._resolutions[index][2]),
-                'cap_fps' : float(self._resolutions[index][3])
-            }
+        self._settings['cap_settings']['cap_mode'] = self._resolutions[index][0]
+        self._settings['cap_settings']['cap_width'] = int(self._resolutions[index][1])
+        self._settings['cap_settings']['cap_height'] = int(self._resolutions[index][2])
+        self._settings['cap_settings']['cap_fps'] = float(self._resolutions[index][3])
         
         
     def _combo_rot_on_selected(self, e):
-        pass
-    
-    
-    def _combo_fli_on_selected(self, e):
-        pass
+        self._settings['cap_settings']['cap_rotation'] = e.widget.current()
         
         
     def _save(self):
-        self._settings['canvas_settings'] = {
-            'canvas_width' : self._canvas_width_var.get(),
-            'canvas_height' : self._canvas_height_var.get(),
-            'update_interval' : self._canvas_fps_var.get()
-        }
+        self._settings['canvas_settings']['canvas_width'] = self._canvas_width_var.get()
+        self._settings['canvas_settings']['canvas_height'] = self._canvas_height_var.get()
+        self._settings['canvas_settings']['update_interval'] = self._canvas_fps_var.get()
         self._settings['gst_str'] = gst_builder.get_gst(self._settings)
+        
         ju.save(self._settings)
         self._label_sav.configure(text="Save OK")
         self.master.after(2000, lambda: self._label_sav.configure(text=""))
