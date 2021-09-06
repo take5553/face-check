@@ -34,7 +34,8 @@ def load():
                 'canvas_width' : 600,
                 'canvas_height' : 860,
                 'update_interval' : 15
-            }
+            },
+            'save_dir' : os.path.dirname(os.path.abspath(__file__)) + "/data/"
         }
         gst_str = gst_builder.get_gst(d)
         d['gst_str'] = gst_str

@@ -1,9 +1,10 @@
+import cv2
+import os
+import PIL.Image, PIL.ImageTk
+import random
 import tkinter as tk
 from tkinter import ttk
 from jetcam.usb_camera import USBCamera
-import cv2
-import PIL.Image, PIL.ImageTk
-import os
 import json_util as ju
 from mycamera import MyCamera
 
@@ -24,10 +25,16 @@ class CaptureWindow(ttk.Frame):
         self._create_widgets()
         
         self._cap_im_fl = False
-        self._abspath = os.path.dirname(os.path.abspath(__file__)) + "/data/"
+        self._abspath = self._settings['save_dir']
+        if self._settings['save_dir'][-1] != '/':
+            self._abspath += '/'
         self._file_prefix = "capture"
         self._file_ext = ".jpg"
-        self._image_index = 0
+        self._datasets_dir = ('train/', 'valid/', 'test/')
+        self._image_index = [0, 0, 0]
+        self._total_im_count = 0
+        self._save_dir_order = []
+        self._set_save_dir_order()
         
         self._cap_ims_fl = False
 
@@ -82,18 +89,22 @@ class CaptureWindow(ttk.Frame):
 
     def _get_index(self):
         if self._data_name.get() == '':
-            self._im_dir = 'Data1/train/'
+            self._im_dir = 'Data1/'
         else:
-            self._im_dir = self._data_name.get() + '/train/'
-        os.makedirs(self._abspath + self._im_dir, exist_ok=True)
-        files = os.listdir(self._abspath + self._im_dir)
-        files_file = [f for f in files if os.path.isfile(os.path.join(self._abspath + self._im_dir, f))]
-        if len(files_file) > 0:
-            for f in files_file:
-                if (int(f[len(self._file_prefix):len(self._file_prefix) + 4]) > self._image_index):
-                    self._image_index = int(f[len(self._file_prefix):len(self._file_prefix) + 4]) + 1
-        else:
-            self._image_index = 0
+            self._im_dir = self._data_name.get()
+        if self._im_dir[-1] != '/':
+            self._im_dir += '/'
+        for i in range(3):
+            os.makedirs(self._abspath + self._im_dir + self._datasets_dir[i], exist_ok=True)
+            files = os.listdir(self._abspath + self._im_dir + self._datasets_dir[i])
+            files_file = [f for f in files if os.path.isfile(os.path.join(self._abspath + self._im_dir + self._datasets_dir[i], f))]
+            if len(files_file) > 0:
+                for f in files_file:
+                    if (int(f[len(self._file_prefix):len(self._file_prefix) + 4]) > self._image_index[i]):
+                        self._image_index[i] = int(f[len(self._file_prefix):len(self._file_prefix) + 4]) + 1
+            else:
+                self._image_index[i] = 0
+        self._total_im_count = sum(self._image_index)
         
         
     def _one_capture(self):
@@ -114,19 +125,38 @@ class CaptureWindow(ttk.Frame):
         self._camera.running = False
         self._camera.cap.release()
         self.master.destroy()
+        
+        
+    def _set_save_dir_order(self):
+        r1 = random.randrange(10)
+        r2 = random.randrange(10)
+        while r1 == r2:
+            r2 = random.randrange(10)
+        for i in range(10):
+            if i == r1:
+                self._save_dir_order += [1]
+            elif i == r2:
+                self._save_dir_order += [2]
+            else:
+                self._save_dir_order += [0]
 
 
     def _update(self):
         frame = self._camera.value
         if (self._cap_im_fl == True) or (self._cap_ims_fl == True):
-            cv2.imwrite('{}{}{:04}{}'.format(self._abspath + self._im_dir, self._file_prefix, self._image_index, self._file_ext), frame)
-            self._image_index += 1
+            self._total_im_count += 1
+            index = self._total_im_count % 10
+            if index == 0:
+                self._save_dir_order = []
+                self._set_save_dir_order()
+            cv2.imwrite('{}{}{:04}{}'.format(self._abspath + self._im_dir + self._datasets_dir[self._save_dir_order[index]], self._file_prefix, self._image_index[self._save_dir_order[index]], self._file_ext), frame)
+            self._image_index[self._save_dir_order[index]] += 1
             if (self._cap_im_fl == True):
                 self._cap_im_fl = False
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         self._photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(frame))
         self._canvas1.create_image(0, 0, image = self._photo, anchor = tk.NW)
-        self._label_save_count.configure(text=self._image_index)
+        self._label_save_count.configure(text=self._total_im_count)
         self.master.after(self._delay, self._update)
 
 
