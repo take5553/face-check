@@ -4,7 +4,6 @@ import PIL.Image, PIL.ImageTk
 import random
 import tkinter as tk
 from tkinter import ttk
-from jetcam.usb_camera import USBCamera
 import json_util as ju
 from mycamera import MyCamera
 

@@ -3,6 +3,7 @@ from tkinter import messagebox
 from tkinter import ttk
 from w_capture import CaptureWindow
 from w_config import ConfigWindow
+from w_recog import RecogWindow
 
 
 class Application(ttk.Frame):
@@ -11,6 +12,7 @@ class Application(ttk.Frame):
         self.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
         self._capture_window = None
         self._config_window = None
+        self._recog_window = None
         self._camera = None
         self._create_widgets()
         
@@ -28,6 +30,12 @@ class Application(ttk.Frame):
         self._frame2.grid(column=0, row=1, sticky=(tk.W, tk.E), padx=10, pady=10)
         self._button2 = ttk.Button(self._frame2, text="Config", command=self._show_config)
         self._button2.grid()
+        
+        #Recognition Window Button
+        self._frame3 = ttk.Frame(self)
+        self._frame3.grid(column=0, row=2, sticky=(tk.W, tk.E), padx=10, pady=10)
+        self._button3 = ttk.Button(self._frame3, text="Recognition", command=self._show_recog)
+        self._button3.grid()
 
 
     def _show_capture(self):
@@ -40,6 +48,12 @@ class Application(ttk.Frame):
         if self._config_window == None or not self._config_window.winfo_exists():
             self._config_window = tk.Toplevel()
             self._config = ConfigWindow(master=self._config_window)
+            
+            
+    def _show_recog(self):
+        if self._recog_window == None or not self._recog_window.winfo_exists():
+            self._recog_window = tk.Toplevel()
+            self._recog = RecogWindow(master=self._recog_window)
 
 
 if __name__ == "__main__":
