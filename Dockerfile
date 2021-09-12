@@ -44,7 +44,7 @@ RUN apt update \
     && apt clean
         
 RUN python3 -m pip install -U pip setuptools \
-    && python3 -m pip install --no-cache-dir traitlets
+    && python3 -m pip install --no-cache-dir traitlets facenet-pytorch
     
 RUN git clone --branch=master --depth=1 https://github.com/NVIDIA-AI-IOT/jetcam \
     && cd jetcam \
