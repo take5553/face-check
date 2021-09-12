@@ -1,5 +1,4 @@
 from jetcam.usb_camera import USBCamera
-from device_check import get_device_id, get_format
 import json_util as ju
 
 
