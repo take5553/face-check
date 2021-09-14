@@ -193,7 +193,7 @@ class CaptureWindow(ttk.Frame):
                 self._cap_im_fl = False
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         self._photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(frame))
-        self._canvas1.create_image(0, 0, image = self._photo, anchor = tk.NW)
+        self._canvas1.create_image(self._canvas_width / 2, self._canvas_height / 2, image = self._photo, anchor=tk.CENTER)
         self.master.after(self._delay, self._update)
 
 

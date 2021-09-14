@@ -75,7 +75,7 @@ class RecogWindow(ttk.Frame):
             for box in boxes:
                 draw.rectangle(box.tolist(), outline=(255, 0, 0), width=6)
         self._photo = PIL.ImageTk.PhotoImage(image=image)
-        self._canvas1.create_image(0, 0, image = self._photo, anchor = tk.NW)
+        self._canvas1.create_image(self._canvas_width / 2, self._canvas_height / 2, image = self._photo, anchor=tk.CENTER)
         self.master.after(self._delay, self._update)
 
 
