@@ -1,12 +1,18 @@
 import cv2
+import numpy as np
+import os
 import PIL.Image, PIL.ImageTk, PIL.ImageDraw
 import tkinter as tk
 from tkinter import ttk
 import json_util as ju
 from mycamera import MyCamera
 
-from facenet_pytorch import MTCNN
+from facenet_pytorch import MTCNN, InceptionResnetV1
 import torch
+
+nn_device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+mtcnn = MTCNN(device=nn_device)
+resnet = InceptionResnetV1(pretrained='vggface2').eval().to(nn_device)
 
 class RecogWindow(ttk.Frame):
     def __init__(self, master=None):
@@ -44,16 +50,56 @@ class RecogWindow(ttk.Frame):
     
     def _setup_nn_engine(self):
         print('Initializing start')
-        self._nn_device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        print('Running on device: {}'.format(self._nn_device))
-        self._mtcnn = MTCNN(keep_all=True, device=self._nn_device)
+        global nn_device
+        #self._nn_device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        print('Running on device: {}'.format(nn_device))
+        print('MTCNN initializing')
+        #self._mtcnn = MTCNN(device=self._nn_device)
+        global mtcnn
         print('MTCNN initialized')
         dummy = self._camera.read()
-        print('Dummy data captured')
         dummy = cv2.cvtColor(dummy, cv2.COLOR_BGR2RGB)
-        self._mtcnn.detect(dummy)
-        print('Pre-detection complete')
+        mtcnn.detect(dummy)
+        print('MTCNN Pre-detection complete')
+        print('InceptionResnet V1 initializing')
+        #self._resnet = InceptionResnetV1(pretrained='vggface2').eval().to(self._nn_device)
+        print('InceptionResnet V1 initialized')
+        print('Make Dataset')
+        self._registered = self._make_dataset(os.path.dirname(os.path.abspath(__file__)) + '/data/register/')
+        print('Made Dataset')
         
+        
+    def _get_vec(self, img):
+        global mtcnn
+        global resnet
+        global nn_device
+        img_cropped = mtcnn(img)
+        if img_cropped == None:
+            return None
+        img_embedding = resnet(img_cropped.unsqueeze(0).to(nn_device))
+        return img_embedding.squeeze().to('cpu').detach().numpy().copy()
+        
+    
+    def _make_data(self, file_path):
+        img = cv2.imread(file_path)
+        return self._get_vec(img)
+    
+    
+    def _make_dataset(self, dir_path):
+        self._file_list = sorted(os.listdir(dir_path))
+        ps = []
+        for i in range(len(self._file_list)):
+            print(dir_path + self._file_list[i])
+            ps += [self._make_data(dir_path + self._file_list[i])]
+        q = np.stack(ps)
+        return q
+    
+    
+    def _cos_sim_vs2d(self, arr, vec):
+        den = np.sqrt(np.einsum('ij,ij->i',arr,arr)*np.einsum('j,j',vec,vec))
+        out = arr.dot(vec) / den
+        return out
+    
         
     def _on_closing(self):
         self._camera.running = False
@@ -70,10 +116,11 @@ class RecogWindow(ttk.Frame):
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         image = PIL.Image.fromarray(frame)
         if self._detecting == True:
-            boxes, _ = self._mtcnn.detect(image)
-            draw = PIL.ImageDraw.Draw(image)
-            for box in boxes:
-                draw.rectangle(box.tolist(), outline=(255, 0, 0), width=6)
+            vec = self._get_vec(frame)
+            if not (vec is None):
+                result_idx = self._cos_sim_vs2d(self._registered, vec).argmax()
+                draw = PIL.ImageDraw.Draw(image)
+                draw.text((0, 0), self._file_list[result_idx])
         self._photo = PIL.ImageTk.PhotoImage(image=image)
         self._canvas1.create_image(self._canvas_width / 2, self._canvas_height / 2, image = self._photo, anchor=tk.CENTER)
         self.master.after(self._delay, self._update)
