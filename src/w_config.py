@@ -125,6 +125,16 @@ class ConfigWindow(ttk.Frame):
         row += 1
         
         column = 0
+        self._label_win_set = ttk.Label(self, text="Window Settings")
+        column += 1
+        self._label_win_full = ttk.Label(self, text="Fullscreen")
+        self._label_win_full.grid(column=column, row=row, padx=padx, pady=pady)
+        column += 1
+        self._checkbutton_win_full = ttk.Checkbutton(self)
+        self._checkbutton_win_full.grid(column=column, row=row, padx=padx, pady=pady, sticky=tk.W)
+        row += 1
+        
+        column = 0
         # blank cell
         column += 1
         # blank cell
@@ -153,6 +163,8 @@ class ConfigWindow(ttk.Frame):
         self._label_sav_onedir_pre.configure(text=self._sav_dir.get())
         self._sav_onedir = tk.StringVar(value=self._settings['save_settings']['onepic_dir'])
         self._entry_sav_onedir.configure(textvariable=self._sav_onedir)
+        self._win_full = tk.BooleanVar(value=self._settings['fullscreen'])
+        self._checkbutton_win_full.configure(variable=self._win_full)
 
         
     def _set_combo_dev_values(self):
@@ -229,6 +241,8 @@ class ConfigWindow(ttk.Frame):
         self._settings['canvas_settings']['canvas_height'] = self._canvas_height_var.get()
         self._settings['canvas_settings']['update_interval'] = self._canvas_fps_var.get()
         self._settings['save_settings']['main_dir'] = self._sav_dir.get()
+        self._settings['save_settings']['onepic_dir'] = self._sav_onedir.get()
+        self._settings['fullscreen'] = self._win_full.get()
         self._settings['gst_str'] = gst_builder.get_gst(self._settings)
         
         ju.save(self._settings)

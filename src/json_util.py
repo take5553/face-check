@@ -38,7 +38,8 @@ def load():
             'save_settings' : {
                 'main_dir' : os.path.dirname(os.path.abspath(__file__)) + "/data/",
                 'onepic_dir' : 'onepic/'
-            }
+            },
+            'fullscreen' : True
         }
         gst_str = gst_builder.get_gst(d)
         d['gst_str'] = gst_str
