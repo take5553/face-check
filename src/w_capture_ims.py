@@ -23,7 +23,6 @@ class ImsCaptureWindow(ttk.Frame):
 
         self._create_widgets()
         
-        self._cap_im_fl = False
         self._abspath = self._settings['save_dir']
         if self._settings['save_dir'][-1] != '/':
             self._abspath += '/'
@@ -49,13 +48,9 @@ class ImsCaptureWindow(ttk.Frame):
         self._frame1 = ttk.Frame(self)
         self._frame1.grid(column=0, row=1, sticky=(tk.W, tk.E))
 
-        # One Image Button
-        self._button_image = ttk.Button(self._frame1, text="Take a pic", command=self._one_capture)
-        self._button_image.grid(column=0, row=0, padx=10, pady=10, sticky=(tk.W, tk.E))
-
         # Images Button
         self._button_images = ttk.Button(self._frame1, text="Continous images", command=self._capture_images)
-        self._button_images.grid(column=1, row=0, padx=10, pady=10, sticky=(tk.W, tk.E))
+        self._button_images.grid(column=0, row=0, columnspan=2, padx=10, pady=10, sticky=(tk.W, tk.E))
         
         # Save Settings
         self._frame_name = ttk.Frame(self._frame1)
@@ -115,35 +110,18 @@ class ImsCaptureWindow(ttk.Frame):
             files_file = [f for f in files if os.path.isfile(os.path.join(self._abspath + self._im_dir + self._datasets_dir[i], f))]
             if len(files_file) > 0:
                 for f in files_file:
-                    if (int(f[len(self._file_prefix):len(self._file_prefix) + 4]) > self._image_index[i]):
-                        self._image_index[i] = int(f[len(self._file_prefix):len(self._file_prefix) + 4]) + 1
+                    if (int(f[len(self._file_prefix[i]):len(self._file_prefix[i]) + 4]) > self._image_index[i]):
+                        self._image_index[i] = int(f[len(self._file_prefix[i]):len(self._file_prefix[i]) + 4]) + 1
             else:
                 self._image_index[i] = 0
         self._total_im_count = sum(self._image_index)
-        
-        
-    def _one_capture(self):
-        self._cap_im_fl = True
-        self._timing = 0
-        self._shutter_timing = 0
-        self._im_dir = ''
-        self._datasets_dir = ('oneshot/', 'oneshot/', 'oneshot/')
-        if self._data_name.get() == '':
-            self._file_prefix = 'noname'
-        else:
-            self._file_prefix = self._data_name.get()
-        self._set_save_dir_order()
-        self._get_index()
 
 
     def _capture_images(self):
-        if self._cap_im_fl == True:
-            self._cap_im_fl = False
         self._cap_ims_fl = not self._cap_ims_fl
         if self._cap_ims_fl == True:
             self._button_images.configure(text="Stop")
-            self._button_image.configure(state="disable")
-            self._file_prefix = "capture"
+            self._file_prefix = ('train', 'valid', 'test')
             self._datasets_dir = ('train/', 'valid/', 'test/')
             if self._data_name.get() == '':
                 self._im_dir = 'Data1/'
@@ -157,7 +135,6 @@ class ImsCaptureWindow(ttk.Frame):
             self._shutter_timing = self._shutter_speed.get()
         else:
             self._button_images.configure(text="Continous images")
-            self._button_image.configure(state="enable")
 
 
     def _on_closing(self):
@@ -167,20 +144,16 @@ class ImsCaptureWindow(ttk.Frame):
         
         
     def _set_save_dir_order(self):
-        if self._cap_ims_fl == True:
-            r1 = random.randrange(10)
+        r1 = random.randrange(10)
+        r2 = random.randrange(10)
+        while r1 == r2:
             r2 = random.randrange(10)
-            while r1 == r2:
-                r2 = random.randrange(10)
-            for i in range(10):
-                if i == r1:
-                    self._save_dir_order += [1]
-                elif i == r2:
-                    self._save_dir_order += [2]
-                else:
-                    self._save_dir_order += [0]
-        elif self._cap_im_fl == True:
-            for i in range(10):
+        for i in range(10):
+            if i == r1:
+                self._save_dir_order += [1]
+            elif i == r2:
+                self._save_dir_order += [2]
+            else:
                 self._save_dir_order += [0]
 
 
@@ -188,7 +161,7 @@ class ImsCaptureWindow(ttk.Frame):
         frame = self._camera.value
         if self._cap_ims_fl == True:
             self._timing += 1
-        if (self._cap_im_fl == True) or ((self._cap_ims_fl == True) and (self._timing == self._shutter_timing)):
+        if (self._cap_ims_fl == True) and (self._timing == self._shutter_timing):
             self._timing = 0
             self._total_im_count += 1
             self._label_save_count.configure(text=self._total_im_count)
@@ -196,11 +169,9 @@ class ImsCaptureWindow(ttk.Frame):
             if index == 0:
                 self._save_dir_order = []
                 self._set_save_dir_order()
-            cv2.imwrite('{}{}{:04}{}'.format(self._abspath + self._im_dir + self._datasets_dir[self._save_dir_order[index]], self._file_prefix, self._image_index[self._save_dir_order[index]], self._file_ext), frame)
+            cv2.imwrite('{}{}{:04}{}'.format(self._abspath + self._im_dir + self._datasets_dir[self._save_dir_order[index]], self._file_prefix[self._save_dir_order[index]], self._image_index[self._save_dir_order[index]], self._file_ext), frame)
             self._image_index[self._save_dir_order[index]] += 1
             self._label_sub_count[self._save_dir_order[index]].configure(text=self._image_index[self._save_dir_order[index]])
-            if (self._cap_im_fl == True):
-                self._cap_im_fl = False
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         self._photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(frame))
         self._canvas1.create_image(self._canvas_width / 2, self._canvas_height / 2, image = self._photo, anchor=tk.CENTER)
