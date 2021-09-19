@@ -49,7 +49,7 @@ class ImsCaptureWindow(ttk.Frame):
         self._frame1.grid(column=0, row=1, sticky=(tk.W, tk.E))
 
         # Images Button
-        self._button_images = ttk.Button(self._frame1, text="Continous images", command=self._capture_images)
+        self._button_images = ttk.Button(self._frame1, text="Continous images", command=self._switch_capture_fl)
         self._button_images.grid(column=0, row=0, columnspan=2, padx=10, pady=10, sticky=(tk.W, tk.E))
         
         # Save Settings
@@ -63,12 +63,22 @@ class ImsCaptureWindow(ttk.Frame):
         self._label_speed.grid(column=0, row=1)
         self._frame_speed = ttk.Frame(self._frame_name)
         self._frame_speed.grid(column=1, row=1)
-        self._label_speed_despription = ttk.Label(self._frame_speed, text='1 shoot per ')
+        self._label_speed_despription = ttk.Label(self._frame_speed, text='1 save per ')
         self._label_speed_despription.grid(column=0, row=0)
         self._entry_speed = ttk.Entry(self._frame_speed)
         self._entry_speed.grid(column=1, row=0, sticky=(tk.W, tk.E))
         self._label_speed_despription2 = ttk.Label(self._frame_speed, text='frame(s)')
         self._label_speed_despription2.grid(column=2, row=0)
+        self._label_pic_count = ttk.Label(self._frame_name, text='Capture count')
+        self._label_pic_count.grid(column=0, row=2)
+        self._frame_pic_count = ttk.Frame(self._frame_name)
+        self._frame_pic_count.grid(column=1, row=2)
+        self._label_pic_count_pre = ttk.Label(self._frame_pic_count, text='Up to ')
+        self._label_pic_count_pre.grid(column=0, row=0)
+        self._entry_pic_count = ttk.Entry(self._frame_pic_count, width=6)
+        self._entry_pic_count.grid(column=1, row=0)
+        self._label_pic_count_sur = ttk.Label(self._frame_pic_count, text='pics')
+        self._label_pic_count_sur.grid(column=2, row=0)
         
         # Save State
         self._frame_save_state = ttk.Frame(self._frame1)
@@ -101,6 +111,8 @@ class ImsCaptureWindow(ttk.Frame):
         self._entry_name.configure(textvariable=self._data_name)
         self._shutter_speed = tk.IntVar(value=1)
         self._entry_speed.configure(textvariable=self._shutter_speed)
+        self._pic_count = tk.IntVar()
+        self._entry_pic_count.configure(textvariable=self._pic_count)
         
 
     def _get_index(self):
@@ -117,7 +129,7 @@ class ImsCaptureWindow(ttk.Frame):
         self._total_im_count = sum(self._image_index)
 
 
-    def _capture_images(self):
+    def _switch_capture_fl(self):
         self._cap_ims_fl = not self._cap_ims_fl
         if self._cap_ims_fl == True:
             self._button_images.configure(text="Stop")
@@ -133,6 +145,8 @@ class ImsCaptureWindow(ttk.Frame):
             self._get_index()
             self._timing = 0
             self._shutter_timing = self._shutter_speed.get()
+            self._current_im_count = 0
+            self._current_im_count_lim = self._pic_count.get()
         else:
             self._button_images.configure(text="Continous images")
 
@@ -164,6 +178,7 @@ class ImsCaptureWindow(ttk.Frame):
         if (self._cap_ims_fl == True) and (self._timing == self._shutter_timing):
             self._timing = 0
             self._total_im_count += 1
+            self._current_im_count += 1
             self._label_save_count.configure(text=self._total_im_count)
             index = self._total_im_count % 10
             if index == 0:
@@ -172,6 +187,8 @@ class ImsCaptureWindow(ttk.Frame):
             cv2.imwrite('{}{}{:04}{}'.format(self._abspath + self._im_dir + self._datasets_dir[self._save_dir_order[index]], self._file_prefix[self._save_dir_order[index]], self._image_index[self._save_dir_order[index]], self._file_ext), frame)
             self._image_index[self._save_dir_order[index]] += 1
             self._label_sub_count[self._save_dir_order[index]].configure(text=self._image_index[self._save_dir_order[index]])
+            if self._current_im_count == self._current_im_count_lim:
+                self._switch_capture_fl()
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         self._photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(frame))
         self._canvas1.create_image(self._canvas_width / 2, self._canvas_height / 2, image = self._photo, anchor=tk.CENTER)
