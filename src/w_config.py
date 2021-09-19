@@ -98,11 +98,30 @@ class ConfigWindow(ttk.Frame):
         row += 1
         
         column = 0
+        self._label_sav_set = ttk.Label(self, text="Save Settings")
+        self._label_sav_set.grid(column=column, row=row, padx=padx, pady=pady)
+        column += 1
         self._label_sav_dir = ttk.Label(self, text="Save Directory")
         self._label_sav_dir.grid(column=column, row=row, padx=padx, pady=pady)
         column += 1
         self._entry_sav_dir = ttk.Entry(self)
-        self._entry_sav_dir.grid(column=column, row=row, columnspan=2, padx=padx, pady=pady, sticky=(tk.W, tk.E))
+        self._entry_sav_dir.grid(column=column, row=row, padx=padx, pady=pady, sticky=(tk.W, tk.E))
+        row += 1
+        
+        column = 0
+        # blank cell
+        column += 1
+        self._label_sav_onedir = ttk.Label(self, text="One Pic Sub Directory")
+        self._label_sav_onedir.grid(column=column, row=row, padx=padx, pady=pady)
+        column += 1
+        self._frame_sav_onedir = ttk.Frame(self)
+        self._frame_sav_onedir.grid(column=column, row=row, padx=padx, pady=pady, sticky=tk.W)
+        # ----------
+        self._label_sav_onedir_pre = ttk.Label(self._frame_sav_onedir)
+        self._label_sav_onedir_pre.grid(column=0, row=0)
+        self._entry_sav_onedir = ttk.Entry(self._frame_sav_onedir)
+        self._entry_sav_onedir.grid(column=1, row=0, sticky=(tk.W))
+        # ----------
         row += 1
         
         column = 0
@@ -131,6 +150,9 @@ class ConfigWindow(ttk.Frame):
         self._entry_can_fps.configure(textvariable=self._canvas_fps_var, validate='key', validatecommand=vcmd)
         self._sav_dir = tk.StringVar(value=self._settings['save_dir'])
         self._entry_sav_dir.configure(textvariable=self._sav_dir)
+        self._label_sav_onedir_pre.configure(text=self._sav_dir.get())
+        self._sav_onedir = tk.StringVar(value=self._settings['save_dir_onepic'])
+        self._entry_sav_onedir.configure(textvariable=self._sav_onedir)
 
         
     def _set_combo_dev_values(self):

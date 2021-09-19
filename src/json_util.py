@@ -35,7 +35,8 @@ def load():
                 'canvas_height' : 860,
                 'update_interval' : 15
             },
-            'save_dir' : os.path.dirname(os.path.abspath(__file__)) + "/data/"
+            'save_dir' : os.path.dirname(os.path.abspath(__file__)) + "/data/",
+            'save_dir_onepic' : 'onepic/'
         }
         gst_str = gst_builder.get_gst(d)
         d['gst_str'] = gst_str

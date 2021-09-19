@@ -80,7 +80,9 @@ class ImCaptureWindow(ttk.Frame):
         
     def _one_capture(self):
         self._cap_im_fl = True
-        self._im_dir = 'register/'
+        self._im_dir = self._settings['save_dir_onepic']
+        if self._settings['save_dir_onepic'][-1] != '/':
+            self._im_dir += '/'
         if self._data_name.get() == '':
             self._file_prefix = 'noname'
         else:
