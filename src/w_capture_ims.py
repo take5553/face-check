@@ -7,7 +7,7 @@ from tkinter import ttk
 import json_util as ju
 from mycamera import MyCamera
 
-class CaptureWindow(ttk.Frame):
+class ImsCaptureWindow(ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self._settings = ju.load()
@@ -27,13 +27,10 @@ class CaptureWindow(ttk.Frame):
         self._abspath = self._settings['save_dir']
         if self._settings['save_dir'][-1] != '/':
             self._abspath += '/'
-        self._file_prefix = "capture"
         self._file_ext = ".jpg"
-        self._datasets_dir = ('train/', 'valid/', 'test/')
         self._image_index = [0, 0, 0]
         self._total_im_count = 0
         self._save_dir_order = []
-        self._set_save_dir_order()
         
         self._cap_ims_fl = False
 
@@ -112,12 +109,6 @@ class CaptureWindow(ttk.Frame):
         
 
     def _get_index(self):
-        if self._data_name.get() == '':
-            self._im_dir = 'Data1/'
-        else:
-            self._im_dir = self._data_name.get()
-        if self._im_dir[-1] != '/':
-            self._im_dir += '/'
         for i in range(3):
             os.makedirs(self._abspath + self._im_dir + self._datasets_dir[i], exist_ok=True)
             files = os.listdir(self._abspath + self._im_dir + self._datasets_dir[i])
@@ -132,11 +123,17 @@ class CaptureWindow(ttk.Frame):
         
         
     def _one_capture(self):
-        if self._cap_ims_fl == False:
-            self._cap_im_fl = True
-            self._timing = 0
-            self._shutter_timing = 0
-            self._get_index()
+        self._cap_im_fl = True
+        self._timing = 0
+        self._shutter_timing = 0
+        self._im_dir = ''
+        self._datasets_dir = ('oneshot/', 'oneshot/', 'oneshot/')
+        if self._data_name.get() == '':
+            self._file_prefix = 'noname'
+        else:
+            self._file_prefix = self._data_name.get()
+        self._set_save_dir_order()
+        self._get_index()
 
 
     def _capture_images(self):
@@ -146,6 +143,15 @@ class CaptureWindow(ttk.Frame):
         if self._cap_ims_fl == True:
             self._button_images.configure(text="Stop")
             self._button_image.configure(state="disable")
+            self._file_prefix = "capture"
+            self._datasets_dir = ('train/', 'valid/', 'test/')
+            if self._data_name.get() == '':
+                self._im_dir = 'Data1/'
+            else:
+                self._im_dir = self._data_name.get()
+            if self._im_dir[-1] != '/':
+                self._im_dir += '/'
+            self._set_save_dir_order()
             self._get_index()
             self._timing = 0
             self._shutter_timing = self._shutter_speed.get()
@@ -161,16 +167,20 @@ class CaptureWindow(ttk.Frame):
         
         
     def _set_save_dir_order(self):
-        r1 = random.randrange(10)
-        r2 = random.randrange(10)
-        while r1 == r2:
+        if self._cap_ims_fl == True:
+            r1 = random.randrange(10)
             r2 = random.randrange(10)
-        for i in range(10):
-            if i == r1:
-                self._save_dir_order += [1]
-            elif i == r2:
-                self._save_dir_order += [2]
-            else:
+            while r1 == r2:
+                r2 = random.randrange(10)
+            for i in range(10):
+                if i == r1:
+                    self._save_dir_order += [1]
+                elif i == r2:
+                    self._save_dir_order += [2]
+                else:
+                    self._save_dir_order += [0]
+        elif self._cap_im_fl == True:
+            for i in range(10):
                 self._save_dir_order += [0]
 
 
@@ -199,6 +209,6 @@ class CaptureWindow(ttk.Frame):
 
 if __name__ == "__main__":
     window = tk.Tk()
-    app = CaptureWindow(master=window)
+    app = ImsCaptureWindow(master=window)
     app.mainloop()
     
