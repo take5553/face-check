@@ -148,10 +148,10 @@ class ConfigWindow(ttk.Frame):
         self._entry_can_height.configure(textvariable=self._canvas_height_var, validate='key', validatecommand=vcmd)
         self._canvas_fps_var = tk.IntVar(value=self._settings['canvas_settings']['update_interval'])
         self._entry_can_fps.configure(textvariable=self._canvas_fps_var, validate='key', validatecommand=vcmd)
-        self._sav_dir = tk.StringVar(value=self._settings['save_dir'])
+        self._sav_dir = tk.StringVar(value=self._settings['save_settings']['main_dir'])
         self._entry_sav_dir.configure(textvariable=self._sav_dir)
         self._label_sav_onedir_pre.configure(text=self._sav_dir.get())
-        self._sav_onedir = tk.StringVar(value=self._settings['save_dir_onepic'])
+        self._sav_onedir = tk.StringVar(value=self._settings['save_settings']['onepic_dir'])
         self._entry_sav_onedir.configure(textvariable=self._sav_onedir)
 
         
@@ -228,7 +228,7 @@ class ConfigWindow(ttk.Frame):
         self._settings['canvas_settings']['canvas_width'] = self._canvas_width_var.get()
         self._settings['canvas_settings']['canvas_height'] = self._canvas_height_var.get()
         self._settings['canvas_settings']['update_interval'] = self._canvas_fps_var.get()
-        self._settings['save_dir'] = self._sav_dir.get()
+        self._settings['save_settings']['main_dir'] = self._sav_dir.get()
         self._settings['gst_str'] = gst_builder.get_gst(self._settings)
         
         ju.save(self._settings)

@@ -24,8 +24,8 @@ class ImCaptureWindow(ttk.Frame):
         self._create_widgets()
         
         self._cap_im_fl = False
-        self._abspath = self._settings['save_dir']
-        if self._settings['save_dir'][-1] != '/':
+        self._abspath = self._settings['save_settings']['main_dir']
+        if self._settings['save_settings']['main_dir'][-1] != '/':
             self._abspath += '/'
         self._file_ext = ".jpg"
         self._image_index = 0
@@ -80,8 +80,8 @@ class ImCaptureWindow(ttk.Frame):
         
     def _one_capture(self):
         self._cap_im_fl = True
-        self._im_dir = self._settings['save_dir_onepic']
-        if self._settings['save_dir_onepic'][-1] != '/':
+        self._im_dir = self._settings['save_settings']['onepic_dir']
+        if self._settings['save_settings']['onepic_dir'][-1] != '/':
             self._im_dir += '/'
         if self._data_name.get() == '':
             self._file_prefix = 'noname'

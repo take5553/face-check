@@ -23,8 +23,8 @@ class ImsCaptureWindow(ttk.Frame):
 
         self._create_widgets()
         
-        self._abspath = self._settings['save_dir']
-        if self._settings['save_dir'][-1] != '/':
+        self._abspath = self._settings['save_settings']['main_dir']
+        if self._settings['save_settings']['main_dir'][-1] != '/':
             self._abspath += '/'
         self._file_ext = ".jpg"
         self._image_index = [0, 0, 0]
