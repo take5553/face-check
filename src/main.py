@@ -92,7 +92,7 @@ class Application(ttk.Frame):
         if self._capture_window == None or not self._capture_window.winfo_exists():
             self._capture_window = tk.Toplevel()
             self._capture = RecogWindow(master=self._capture_window)
-            
+    
             
     def _close(self):
         self.master.destroy()

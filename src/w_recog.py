@@ -1,18 +1,13 @@
 import cv2
+from decimal import Decimal, ROUND_HALF_UP
 import numpy as np
 import os
-import PIL.Image, PIL.ImageTk, PIL.ImageDraw
+import PIL.Image, PIL.ImageTk
 import tkinter as tk
 from tkinter import ttk
 import json_util as ju
 from mycamera import MyCamera
-
-# from facenet_pytorch import MTCNN, InceptionResnetV1
-# import torch
-
-# nn_device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-# mtcnn = MTCNN(device=nn_device)
-# resnet = InceptionResnetV1(pretrained='vggface2').eval().to(nn_device)
+from facecheck import FaceCheck
 
 class RecogWindow(ttk.Frame):
     def __init__(self, master=None):
@@ -32,7 +27,11 @@ class RecogWindow(ttk.Frame):
         self._delay = self._settings['canvas_settings']['update_interval']
         
         self._create_widgets()
-        # self._setup_nn_engine()
+        
+        dummy = self._camera.read()
+        dummy = cv2.cvtColor(dummy, cv2.COLOR_BGR2RGB)
+        self._fc = FaceCheck()
+        self._fc.setup_network(dummy)
         
         self._detecting = False
         
@@ -61,8 +60,13 @@ class RecogWindow(ttk.Frame):
         
         self._label_infer_pre = ttk.Label(self._frame_infer, text='You are :')
         self._label_infer_pre.grid(column=0, row=0)
-        self._label_infer = ttk.Label(self._frame_infer, text='', style='Inference.TLabel')
-        self._label_infer.grid(column=1, row=0)
+        self._frame_infer_answer = ttk.Frame(self._frame_infer)
+        self._frame_infer_answer.grid(column=1, row=0, sticky=(tk.W, tk.E))
+        
+        self._label_infer = ttk.Label(self._frame_infer_answer, text='aaaaaa', style='Inference.TLabel')
+        self._label_infer.grid(column=0, row=0)
+        self._label_infer_prob = ttk.Label(self._frame_infer_answer, text='0.999999')
+        self._label_infer_prob.grid(column=0, row=1)
         
         # Start Button
         self._button_start = ttk.Button(self, text='Start', command=self._start_detection)
@@ -79,59 +83,8 @@ class RecogWindow(ttk.Frame):
         self.rowconfigure(3, weight=1)
         self.rowconfigure(4, minsize=20)
         self._frame_infer.columnconfigure(1, weight=1)
-    
-    # def _setup_nn_engine(self):
-    #     print('Initializing start')
-    #     global nn_device
-    #     #self._nn_device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-    #     print('Running on device: {}'.format(nn_device))
-    #     print('MTCNN initializing')
-    #     #self._mtcnn = MTCNN(device=self._nn_device)
-    #     global mtcnn
-    #     print('MTCNN initialized')
-    #     dummy = self._camera.read()
-    #     dummy = cv2.cvtColor(dummy, cv2.COLOR_BGR2RGB)
-    #     mtcnn.detect(dummy)
-    #     print('MTCNN Pre-detection complete')
-    #     print('InceptionResnet V1 initializing')
-    #     #self._resnet = InceptionResnetV1(pretrained='vggface2').eval().to(self._nn_device)
-    #     print('InceptionResnet V1 initialized')
-    #     print('Make Dataset')
-    #     self._registered = self._make_dataset(os.path.dirname(os.path.abspath(__file__)) + '/data/register/')
-    #     print('Made Dataset')
-        
-        
-    # def _get_vec(self, img):
-    #     global mtcnn
-    #     global resnet
-    #     global nn_device
-    #     img_cropped = mtcnn(img)
-    #     if img_cropped == None:
-    #         return None
-    #     img_embedding = resnet(img_cropped.unsqueeze(0).to(nn_device))
-    #     return img_embedding.squeeze().to('cpu').detach().numpy().copy()
-        
-    
-    # def _make_data(self, file_path):
-    #     img = cv2.imread(file_path)
-    #     return self._get_vec(img)
-    
-    
-    # def _make_dataset(self, dir_path):
-    #     self._file_list = sorted(os.listdir(dir_path))
-    #     ps = []
-    #     for i in range(len(self._file_list)):
-    #         print(dir_path + self._file_list[i])
-    #         ps += [self._make_data(dir_path + self._file_list[i])]
-    #     q = np.stack(ps)
-    #     return q
-    
-    
-    # def _cos_sim_vs2d(self, arr, vec):
-    #     den = np.sqrt(np.einsum('ij,ij->i',arr,arr)*np.einsum('j,j',vec,vec))
-    #     out = arr.dot(vec) / den
-    #     return out
-    
+        self._frame_infer_answer.columnconfigure(0, weight=1)
+
         
     def _on_closing(self):
         self._camera.running = False
@@ -145,18 +98,23 @@ class RecogWindow(ttk.Frame):
         
     def _start_detection(self):
         self._detecting = not self._detecting
+        if self._detecting == True:
+            self._button_start.configure(text='Stop')
+        else:
+            self._button_start.configure(text='Start')
+            self._label_infer.configure(text='')
+            self._label_infer_prob.configure(text='')
         
     
     def _update(self):
         frame = self._camera.value
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         image = PIL.Image.fromarray(frame)
-        # if self._detecting == True:
-        #     vec = self._get_vec(frame)
-        #     if not (vec is None):
-        #         result_idx = self._cos_sim_vs2d(self._registered, vec).argmax()
-        #         draw = PIL.ImageDraw.Draw(image)
-        #         draw.text((0, 0), self._file_list[result_idx])
+        if self._detecting == True:
+            name, prob = self._fc.identify(frame)            
+            self._label_infer.configure(text=name)
+            percentage = Decimal(str(prob * 100)).quantize(Decimal('0'), rounding=ROUND_HALF_UP)
+            self._label_infer_prob.configure(text='( {} % )'.format(percentage))
         self._photo = PIL.ImageTk.PhotoImage(image=image)
         self._canvas1.create_image(self._canvas1.winfo_width() / 2, self._canvas1.winfo_height() / 2, image = self._photo, anchor=tk.CENTER)
         self.master.after(self._delay, self._update)
