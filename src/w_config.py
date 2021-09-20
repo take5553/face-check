@@ -9,12 +9,14 @@ import json_util as ju
 class ConfigWindow(ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
-        self.grid(sticky=(tk.E, tk.W, tk.N, tk.S))
+        self._settings = ju.load()
+        if self._settings['fullscreen'] == True:
+            w, h = self.master.winfo_screenwidth(), self.master.winfo_screenheight()
+            self.master.geometry('{}x{}+0+0'.format(w, h))
         self.master.columnconfigure(0, weight=1)
         self.master.rowconfigure(0, weight=1)
+        self.grid(sticky=(tk.E, tk.W, tk.N, tk.S))
         
-        self._settings = ju.load()
-
         self._create_widgets()
         self._set_combo_dev_values()
         self._set_combo_res_values()
@@ -25,6 +27,12 @@ class ConfigWindow(ttk.Frame):
         
         padx = 15
         pady = 10
+        ipadx = 30
+        ipady = 20
+        fontfamily = ''
+        fontsize = 20
+        
+        self.option_add("*TCombobox*Listbox.Font", (fontfamily, fontsize))
 
         row = 0
 
@@ -35,9 +43,9 @@ class ConfigWindow(ttk.Frame):
         self._label_dev = ttk.Label(self, text="Device")
         self._label_dev.grid(column=column, row=row, padx=padx, pady=pady)
         column += 1
-        self._combo_dev = ttk.Combobox(self, state="readonly", width=30)
+        self._combo_dev = ttk.Combobox(self, state="readonly", font=(fontfamily, fontsize))
         self._combo_dev.bind("<<ComboboxSelected>>", self._combo_dev_on_selected)
-        self._combo_dev.grid(column=column, row=row, padx=padx, pady=pady)
+        self._combo_dev.grid(column=column, row=row, padx=padx, pady=pady, sticky=(tk.W, tk.E))
         row += 1
         
         column = 0
@@ -46,9 +54,9 @@ class ConfigWindow(ttk.Frame):
         self._label_res = ttk.Label(self, text="Resolution")
         self._label_res.grid(column=column, row=row, padx=padx, pady=pady)
         column += 1
-        self._combo_res = ttk.Combobox(self, state="readonly", width=30)
+        self._combo_res = ttk.Combobox(self, state="readonly", font=(fontfamily, fontsize))
         self._combo_res.bind("<<ComboboxSelected>>", self._combo_res_on_selected)
-        self._combo_res.grid(column=column, row=row, padx=padx, pady=pady)
+        self._combo_res.grid(column=column, row=row, padx=padx, pady=pady, sticky=(tk.W, tk.E))
         row += 1
         
         column = 0
@@ -57,9 +65,9 @@ class ConfigWindow(ttk.Frame):
         self._label_rot = ttk.Label(self, text="Rotation")
         self._label_rot.grid(column=column, row=row, padx=padx, pady=pady)
         column += 1
-        self._combo_rot = ttk.Combobox(self, state="readonly", width=30)
+        self._combo_rot = ttk.Combobox(self, state="readonly", font=(fontfamily, fontsize))
         self._combo_rot.bind("<<ComboboxSelected>>", self._combo_rot_on_selected)
-        self._combo_rot.grid(column=column, row=row, padx=padx, pady=pady)
+        self._combo_rot.grid(column=column, row=row, padx=padx, pady=pady, sticky=(tk.W, tk.E))
         row += 1
         
         column = 0
@@ -72,11 +80,11 @@ class ConfigWindow(ttk.Frame):
         self._frame_can_wxh = ttk.Frame(self)
         self._frame_can_wxh.grid(column=column, row=row, padx=padx, pady=pady, sticky=tk.W)
         # -----------
-        self._entry_can_width = ttk.Entry(self._frame_can_wxh, width=6)
+        self._entry_can_width = ttk.Entry(self._frame_can_wxh, width=6, font=(fontfamily, fontsize))
         self._entry_can_width.grid(column=0, row=0)
         self._label_can_mul = ttk.Label(self._frame_can_wxh, text=' x ')
         self._label_can_mul.grid(column=1, row=0)
-        self._entry_can_height = ttk.Entry(self._frame_can_wxh, width=6)
+        self._entry_can_height = ttk.Entry(self._frame_can_wxh, width=6, font=(fontfamily, fontsize))
         self._entry_can_height.grid(column=2, row=0)
         # -----------
         row += 1
@@ -90,7 +98,7 @@ class ConfigWindow(ttk.Frame):
         self._frame_can_fps = ttk.Frame(self)
         self._frame_can_fps.grid(column=column, row=row, padx=padx, pady=pady, sticky=tk.W)
         # ----------
-        self._entry_can_fps = ttk.Entry(self._frame_can_fps, width=4)
+        self._entry_can_fps = ttk.Entry(self._frame_can_fps, width=4, font=(fontfamily, fontsize))
         self._entry_can_fps.grid(column=0, row=0)
         self._label_can_fpsunit = ttk.Label(self._frame_can_fps, text="ms")
         self._label_can_fpsunit.grid(column=1, row=0)
@@ -98,20 +106,20 @@ class ConfigWindow(ttk.Frame):
         row += 1
         
         column = 0
-        self._label_sav_set = ttk.Label(self, text="Save Settings")
+        self._label_sav_set = ttk.Label(self, text="Save\nSettings")
         self._label_sav_set.grid(column=column, row=row, padx=padx, pady=pady)
         column += 1
         self._label_sav_dir = ttk.Label(self, text="Save Directory")
         self._label_sav_dir.grid(column=column, row=row, padx=padx, pady=pady)
         column += 1
-        self._entry_sav_dir = ttk.Entry(self)
+        self._entry_sav_dir = ttk.Entry(self, font=(fontfamily, fontsize))
         self._entry_sav_dir.grid(column=column, row=row, padx=padx, pady=pady, sticky=(tk.W, tk.E))
         row += 1
         
         column = 0
         # blank cell
         column += 1
-        self._label_sav_onedir = ttk.Label(self, text="One Pic Sub Directory")
+        self._label_sav_onedir = ttk.Label(self, text="One Pic\nSub Directory")
         self._label_sav_onedir.grid(column=column, row=row, padx=padx, pady=pady)
         column += 1
         self._frame_sav_onedir = ttk.Frame(self)
@@ -119,7 +127,7 @@ class ConfigWindow(ttk.Frame):
         # ----------
         self._label_sav_onedir_pre = ttk.Label(self._frame_sav_onedir)
         self._label_sav_onedir_pre.grid(column=0, row=0)
-        self._entry_sav_onedir = ttk.Entry(self._frame_sav_onedir)
+        self._entry_sav_onedir = ttk.Entry(self._frame_sav_onedir, font=(fontfamily, fontsize))
         self._entry_sav_onedir.grid(column=1, row=0, sticky=(tk.W))
         # ----------
         row += 1
@@ -145,10 +153,19 @@ class ConfigWindow(ttk.Frame):
         self._label_sav = ttk.Label(self._frame_sav)
         self._label_sav.grid(column=0, row=0, padx=20, sticky=tk.E)
         self._button_sav = ttk.Button(self._frame_sav, text="Save", command=self._save)
-        self._button_sav.grid(column=1, row=0)
+        self._button_sav.grid(column=1, row=0, ipadx=ipadx, ipady=ipady)
         self._frame_sav.columnconfigure(0, weight=1)
         # ----------
         row += 1
+        
+        column = 0
+        self._button_close = ttk.Button(self, text='Close', command=self._close)
+        self._button_close.grid(column=column, row=row, columnspan=3, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
+        row += 1
+        
+        self.columnconfigure(2, weight=1)
+        for i in range(row+1):
+            self.rowconfigure(i, weight=1)
         
         # Bind Variables
         vcmd = (self.register(lambda target: target.isdecimal() or len(target) == 0), '%P')
@@ -248,6 +265,10 @@ class ConfigWindow(ttk.Frame):
         ju.save(self._settings)
         self._label_sav.configure(text="Save OK")
         self.master.after(2000, lambda: self._label_sav.configure(text=""))
+        
+        
+    def _close(self):
+        self.master.destroy()
 
 
 if __name__ == "__main__":

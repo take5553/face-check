@@ -28,9 +28,9 @@ class Application(ttk.Frame):
     def _create_widgets(self):
         
         padx = 30
-        pady = 30
+        pady = 20
         ipadx = 30
-        ipady = 30
+        ipady = 20
         
         row = 0
         
@@ -43,15 +43,15 @@ class Application(ttk.Frame):
         self._button1 = ttk.Button(self, text="Continuous Capture", command=self._show_capture_ims)
         self._button1.grid(column=0, row=row, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=ipady)
         row += 1
-
-        #Config Window Button
-        self._button2 = ttk.Button(self, text="Config", command=self._show_config)
-        self._button2.grid(column=0, row=row, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=ipady)
-        row += 1
         
         #Recognition Window Button
         self._button3 = ttk.Button(self, text="Recognition", command=self._show_recog)
         self._button3.grid(column=0, row=row, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=ipady)
+        row += 1
+
+        #Config Window Button
+        self._button2 = ttk.Button(self, text="Config", command=self._show_config)
+        self._button2.grid(column=0, row=row, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=ipady)
         row += 1
         
         #Close Button
@@ -67,6 +67,7 @@ class Application(ttk.Frame):
     def _set_style(self):
         self._style = ttk.Style()
         self._style.configure('TButton', font=("", 20))
+        self._style.configure('TLabel', font=("", 20))
         
         
     def _show_capture_im(self):
