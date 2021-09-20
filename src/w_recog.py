@@ -63,9 +63,9 @@ class RecogWindow(ttk.Frame):
         self._frame_infer_answer = ttk.Frame(self._frame_infer)
         self._frame_infer_answer.grid(column=1, row=0, sticky=(tk.W, tk.E))
         
-        self._label_infer = ttk.Label(self._frame_infer_answer, text='aaaaaa', style='Inference.TLabel')
+        self._label_infer = ttk.Label(self._frame_infer_answer, text='', style='Inference.TLabel')
         self._label_infer.grid(column=0, row=0)
-        self._label_infer_prob = ttk.Label(self._frame_infer_answer, text='0.999999')
+        self._label_infer_prob = ttk.Label(self._frame_infer_answer, text='')
         self._label_infer_prob.grid(column=0, row=1)
         
         # Start Button

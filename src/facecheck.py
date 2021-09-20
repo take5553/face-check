@@ -9,7 +9,7 @@ import json_util as ju
 
 
 nn_device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-mtcnn = MTCNN(device=nn_device)
+mtcnn = MTCNN(min_face_size=120, device=nn_device)
 resnet = InceptionResnetV1(pretrained='vggface2').eval().to(nn_device)
 
 
@@ -25,17 +25,23 @@ class FaceCheck():
             self._registered_dir += '/'
 
 
-    def setup_network(self, dummy_im=None):
+    def setup_network(self, dummy_im=None, dataset_setup=True):
         print('FaceCheck initializing...')
         if not (dummy_im is None):
             global mtcnn
             print('Start pre-detection')
             mtcnn.detect(dummy_im)
             print('End pre-detection')
-        print('Start making registered dataset')
-        self._registered = self._make_dataset(self._registered_dir)
-        print('End making registered dataset')
-        print('Dataset shape is ' + str(self._registered.shape))
+        if dataset_setup:
+            print('Start making registered dataset')
+            self._registered = self._make_dataset(self._registered_dir)
+            print('End making registered dataset')
+            print('Dataset shape is ' + str(self._registered.shape))
+            
+            
+    def detect(self, img):
+        global mtcnn
+        return mtcnn.detect(img)
         
         
     def identify(self, img):
