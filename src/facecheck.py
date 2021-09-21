@@ -66,20 +66,23 @@ class FaceCheck():
         img_cropped = mtcnn(img)
         if img_cropped == None:
             return None
-        img_embedding = resnet(img_cropped.unsqueeze(0).to(nn_device))
-        return img_embedding.squeeze().to('cpu').detach().numpy().copy()
+        elif type(img_cropped) is torch.Tensor:
+            img_embedding = resnet(img_cropped.unsqueeze(0).to(nn_device))
+            return img_embedding.squeeze().to('cpu').detach().numpy().copy()
+        else:
+            img_cropped = torch.stack(img_cropped)
+            img_embedding = resnet(img_cropped.to(nn_device))
+            return img_embedding.to('cpu').detach().numpy().copy()
     
-
-    def _make_data(self, file_path):
-        img = cv2.imread(file_path)
-        return self._get_vec(img)
-
 
     def _make_dataset(self, dir_path):
         self._file_list = sorted(os.listdir(dir_path))
         ps = []
         for i in range(len(self._file_list)):
             print(dir_path + self._file_list[i])
-            ps += [self._make_data(dir_path + self._file_list[i])]
+            img = cv2.imread(dir_path + self._file_list[i])
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            ps += [img]
         q = np.stack(ps)
-        return q
+        return self._get_vec(q)
+        
