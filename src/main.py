@@ -5,6 +5,7 @@ from w_capture_im import ImCaptureWindow
 from w_capture_ims import ImsCaptureWindow
 from w_config import ConfigWindow
 from w_recog import RecogWindow
+from w_registered_list import RegisteredListWindow
 import json_util as ju
 
 
@@ -12,6 +13,9 @@ class Application(ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self._settings = ju.load()
+        s = ttk.Style()
+        s.configure('TButton', font=("", 20))
+        s.configure('TLabel', font=("", 20))
         if self._settings['fullscreen'] == True:
             self.master.attributes('-zoomed', '1')
         self.master.columnconfigure(0, weight=1)
@@ -19,9 +23,9 @@ class Application(ttk.Frame):
         self.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
         self._capture_window = None
         self._config_window = None
+        self._registered_window = None
         self._camera = None
         self._create_widgets()
-        self._set_style()
         
 
     def _create_widgets(self):
@@ -43,6 +47,11 @@ class Application(ttk.Frame):
         self._button1.grid(column=column, row=0, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=ipady)
         column += 1
         
+        #Registered Pics List Window Button
+        self._button5 = ttk.Button(self, text="Registered Pics", command=self._show_registered_list)
+        self._button5.grid(column=column, row=0, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=ipady)
+        column += 1
+        
         #Recognition Window Button
         self._button3 = ttk.Button(self, text="Recognition", command=self._show_recog)
         self._button3.grid(column=column, row=0, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=ipady)
@@ -55,17 +64,11 @@ class Application(ttk.Frame):
         
         #Close Button
         self._button4 = ttk.Button(self, text='Close', command=self._close)
-        self._button4.grid(column=0, row=1, columnspan=4, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=20)
+        self._button4.grid(column=0, row=1, columnspan=5, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=20)
         
         self.rowconfigure(0, weight=1)
         for i in range(column):
             self.columnconfigure(i, weight=1)
-        
-        
-    def _set_style(self):
-        self._style = ttk.Style()
-        self._style.configure('TButton', font=("", 20))
-        self._style.configure('TLabel', font=("", 20))
         
         
     def _show_capture_im(self):
@@ -90,6 +93,12 @@ class Application(ttk.Frame):
         if self._capture_window == None or not self._capture_window.winfo_exists():
             self._capture_window = tk.Toplevel()
             self._capture = RecogWindow(master=self._capture_window)
+            
+            
+    def _show_registered_list(self):
+        if self._registered_window == None or not self._registered_window.winfo_exists():
+            self._registered_window = tk.Toplevel()
+            self._registered_window = RegisteredListWindow(master=self._registered_window)
             
             
     def _close(self):

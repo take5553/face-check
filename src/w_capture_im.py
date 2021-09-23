@@ -19,6 +19,9 @@ class ImCaptureWindow(ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self._settings = ju.load()
+        s = ttk.Style()
+        s.configure('TButton', font=("", 20))
+        s.configure('TLabel', font=("", 20))
         self._camera = MyCamera(width=self._settings['canvas_settings']['canvas_width'], height=self._settings['canvas_settings']['canvas_height'])
         if self._settings['fullscreen'] == True:
             self.master.attributes('-zoomed', '1')
@@ -98,8 +101,6 @@ class ImCaptureWindow(ttk.Frame):
         # Bind
         self._data_name = tk.StringVar()
         self._entry_name.configure(textvariable=self._data_name)
-        # self._entry_name.bind("<FocusIn>", self._call_keyboard)
-        # self._entry_name.bind("<FocusOut>", self._close_keyboard)
         
 
     def _get_index(self):
@@ -137,14 +138,6 @@ class ImCaptureWindow(ttk.Frame):
         
     def _close(self):
         self._on_closing()
-        
-        
-    # def _call_keyboard(self, event):
-    #     subprocess.Popen("onboard")
-        
-        
-    # def _close_keyboard(self, event):
-    #     subprocess.Popen(["pkill", "onboard"])
 
 
     def _toggle_detection(self):

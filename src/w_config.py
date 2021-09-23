@@ -10,6 +10,9 @@ class ConfigWindow(ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self._settings = ju.load()
+        s = ttk.Style()
+        s.configure('TButton', font=("", 20))
+        s.configure('TLabel', font=("", 20))
         if self._settings['fullscreen'] == True:
             self.master.attributes('-zoomed', '1')
         self.master.columnconfigure(0, weight=1)

@@ -76,7 +76,8 @@ class FaceCheck():
     
 
     def _make_dataset(self, dir_path):
-        self._file_list = sorted(os.listdir(dir_path))
+        files = sorted(os.listdir(dir_path))
+        self._file_list = [f for f in files if os.path.isfile(os.path.join(dir_path, f))]
         ps = []
         for i in range(len(self._file_list)):
             print(dir_path + self._file_list[i])
