@@ -13,8 +13,7 @@ class ImsCaptureWindow(ttk.Frame):
         self._settings = ju.load()
         self._camera = MyCamera(width=self._settings['canvas_settings']['canvas_width'], height=self._settings['canvas_settings']['canvas_height'])
         if self._settings['fullscreen'] == True:
-            w, h = self.master.winfo_screenwidth(), self.master.winfo_screenheight()
-            self.master.geometry('{}x{}+0+0'.format(w, h))
+            self.master.attributes('-zoomed', '1')
         self.master.columnconfigure(0, weight=1)
         self.master.rowconfigure(0, weight=1)
         self.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
@@ -43,10 +42,10 @@ class ImsCaptureWindow(ttk.Frame):
 
     def _create_widgets(self):
         
-        padx = 30
+        padx = 20
         pady = 10
         ipadx = 30
-        ipady = 10
+        ipady = 20
         
         # style = ttk.Style()
         # style.configure('Debug1.TFrame', background='red')
@@ -58,7 +57,7 @@ class ImsCaptureWindow(ttk.Frame):
 
         # Button Frame
         self._frame1 = ttk.Frame(self)
-        self._frame1.grid(column=0, row=1, sticky=(tk.W, tk.E))
+        self._frame1.grid(column=1, row=0, sticky=(tk.W, tk.E))
 
         # Images Button
         self._button_images = ttk.Button(self._frame1, text="Take Continous images", command=self._switch_capture_fl)
@@ -66,7 +65,7 @@ class ImsCaptureWindow(ttk.Frame):
         
         # Save Settings
         self._frame_name = ttk.Frame(self._frame1)
-        self._frame_name.grid(column=0, row=1, padx=padx, pady=pady, sticky=(tk.W, tk.E))
+        self._frame_name.grid(column=0, row=1, pady=pady, sticky=(tk.W, tk.E))
         self._label_name = ttk.Label(self._frame_name, text='Data Name')
         self._label_name.grid(column=0, row=0, padx=10, pady=10)
         self._entry_name = ttk.Entry(self._frame_name, width=1, font=("", 20))
@@ -100,7 +99,7 @@ class ImsCaptureWindow(ttk.Frame):
         self._label_save_state = ttk.Label(self._frame_save_state, text='Save Info', anchor='center')
         self._label_save_state.grid(column=0, row=0, columnspan=2, padx=padx, sticky=(tk.W, tk.E))
         
-        self._label_save_description = ttk.Label(self._frame_save_state, text='Total Pics : ')
+        self._label_save_description = ttk.Label(self._frame_save_state, text='Total : ')
         self._label_save_description.grid(column=0, row=1, padx=10)
         self._label_save_count = ttk.Label(self._frame_save_state)
         self._label_save_count.grid(column=1, row=1, sticky=tk.W)
@@ -123,18 +122,12 @@ class ImsCaptureWindow(ttk.Frame):
         self._label_sub_count[2].grid(column=1, row=4, sticky=tk.W)
 
         # Close Button
-        self._button_close = ttk.Button(self._frame1, text='Close', command=self._close)
-        self._button_close.grid(column=0, row=2, columnspan=2, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
+        self._button_close = ttk.Button(self, text='Close', command=self._close)
+        self._button_close.grid(column=0, row=1, columnspan=2, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
         
-        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=1)
-        #self._frame1.columnconfigure(0, weight=1)
         self._frame1.columnconfigure(1, weight=1)
-        # self._frame1.rowconfigure(0, weight=1)
-        # self._frame_name.columnconfigure(0, weight=1)
-        # self._frame_name.columnconfigure(1, weight=1)
-        #self._frame_save_state.columnconfigure(0, weight=1)
         self._frame_save_state.columnconfigure(1, weight=1)
         self._frame_save_state.rowconfigure(0, weight=1)
         self._frame_save_state.rowconfigure(1, weight=1)

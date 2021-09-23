@@ -15,8 +15,7 @@ class RecogWindow(ttk.Frame):
         self._settings = ju.load()
         self._camera = MyCamera(width=self._settings['canvas_settings']['canvas_width'], height=self._settings['canvas_settings']['canvas_height'])
         if self._settings['fullscreen'] == True:
-            w, h = self.master.winfo_screenwidth(), self.master.winfo_screenheight()
-            self.master.geometry('{}x{}+0+0'.format(w, h))
+            self.master.attributes('-zoomed', '1')
         self.master.columnconfigure(0, weight=1)
         self.master.rowconfigure(0, weight=1)
         self.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
@@ -54,9 +53,13 @@ class RecogWindow(ttk.Frame):
         self._canvas1 = tk.Canvas(self, width = self._canvas_width, height = self._canvas_height)
         self._canvas1.grid(column=0, row=0, sticky=(tk.W, tk.E))
         
+        # Button Frame
+        self._frame_others = ttk.Frame(self)
+        self._frame_others.grid(column=1, row=0, sticky=(tk.W, tk.E))
+        
         # Detection
-        self._frame_infer = ttk.Frame(self)
-        self._frame_infer.grid(column=0, row=1, padx=padx, pady=pady, sticky=(tk.W, tk.E))
+        self._frame_infer = ttk.Frame(self._frame_others)
+        self._frame_infer.grid(column=0, row=0, padx=padx, pady=pady, sticky=(tk.W, tk.E))
         
         self._label_infer_pre = ttk.Label(self._frame_infer, text='You are :')
         self._label_infer_pre.grid(column=0, row=0)
@@ -69,19 +72,18 @@ class RecogWindow(ttk.Frame):
         self._label_infer_prob.grid(column=0, row=1)
         
         # Start Button
-        self._button_start = ttk.Button(self, text='Start', command=self._start_detection)
-        self._button_start.grid(column=0, row=2, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
+        self._button_start = ttk.Button(self._frame_others, text='Start', command=self._start_detection)
+        self._button_start.grid(column=0, row=1, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
         
         # Close Button
         self._button_close = ttk.Button(self, text='Close', command=self._close)
-        self._button_close.grid(column=0, row=3, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
+        self._button_close.grid(column=0, row=1, columnspan=2, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
         
-        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1, minsize=400)
         self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=1)
-        self.rowconfigure(2, weight=1)
-        self.rowconfigure(3, weight=1)
-        self.rowconfigure(4, minsize=20)
+        self._frame_others.columnconfigure(0, weight=1)
+        self._frame_others.rowconfigure(0, weight=1)
+        self._frame_others.rowconfigure(1, weight=1)
         self._frame_infer.columnconfigure(1, weight=1)
         self._frame_infer_answer.columnconfigure(0, weight=1)
 

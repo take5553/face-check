@@ -13,8 +13,7 @@ class Application(ttk.Frame):
         super().__init__(master)
         self._settings = ju.load()
         if self._settings['fullscreen'] == True:
-            w, h = self.master.winfo_screenwidth(), self.master.winfo_screenheight()
-            self.master.geometry('{}x{}+0+0'.format(w, h))
+            self.master.attributes('-zoomed', '1')
         self.master.columnconfigure(0, weight=1)
         self.master.rowconfigure(0, weight=1)
         self.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
@@ -27,41 +26,40 @@ class Application(ttk.Frame):
 
     def _create_widgets(self):
         
-        padx = 30
+        padx = 20
         pady = 20
         ipadx = 30
-        ipady = 20
+        ipady = 50
         
-        row = 0
+        column = 0
         
         #Capture Ims Window Button
         self._button0 = ttk.Button(self, text="Image Capture", command=self._show_capture_im)
-        self._button0.grid(column=0, row=row, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=ipady)
-        row += 1
+        self._button0.grid(column=column, row=0, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=ipady)
+        column += 1
 
         #Capture Ims Window Button
         self._button1 = ttk.Button(self, text="Continuous Capture", command=self._show_capture_ims)
-        self._button1.grid(column=0, row=row, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=ipady)
-        row += 1
+        self._button1.grid(column=column, row=0, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=ipady)
+        column += 1
         
         #Recognition Window Button
         self._button3 = ttk.Button(self, text="Recognition", command=self._show_recog)
-        self._button3.grid(column=0, row=row, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=ipady)
-        row += 1
+        self._button3.grid(column=column, row=0, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=ipady)
+        column += 1
 
         #Config Window Button
         self._button2 = ttk.Button(self, text="Config", command=self._show_config)
-        self._button2.grid(column=0, row=row, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=ipady)
-        row += 1
+        self._button2.grid(column=column, row=0, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=ipady)
+        column += 1
         
         #Close Button
         self._button4 = ttk.Button(self, text='Close', command=self._close)
-        self._button4.grid(column=0, row=row, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=ipady)
-        row += 1
+        self._button4.grid(column=0, row=1, columnspan=4, sticky=(tk.W, tk.E), padx=padx, pady=pady, ipadx=ipadx, ipady=20)
         
-        self.columnconfigure(0, weight=1)
-        for i in range(row):
-            self.rowconfigure(i, weight=1)
+        self.rowconfigure(0, weight=1)
+        for i in range(column):
+            self.columnconfigure(i, weight=1)
         
         
     def _set_style(self):
@@ -74,7 +72,7 @@ class Application(ttk.Frame):
         if self._capture_window == None or not self._capture_window.winfo_exists():
             self._capture_window = tk.Toplevel()
             self._capture = ImCaptureWindow(master=self._capture_window)
-
+            
 
     def _show_capture_ims(self):
         if self._capture_window == None or not self._capture_window.winfo_exists():
@@ -92,7 +90,7 @@ class Application(ttk.Frame):
         if self._capture_window == None or not self._capture_window.winfo_exists():
             self._capture_window = tk.Toplevel()
             self._capture = RecogWindow(master=self._capture_window)
-    
+            
             
     def _close(self):
         self.master.destroy()

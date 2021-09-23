@@ -21,8 +21,7 @@ class ImCaptureWindow(ttk.Frame):
         self._settings = ju.load()
         self._camera = MyCamera(width=self._settings['canvas_settings']['canvas_width'], height=self._settings['canvas_settings']['canvas_height'])
         if self._settings['fullscreen'] == True:
-            w, h = self.master.winfo_screenwidth(), self.master.winfo_screenheight()
-            self.master.geometry('{}x{}+0+0'.format(w, h))
+            self.master.attributes('-zoomed', '1')
         self.master.columnconfigure(0, weight=1)
         self.master.rowconfigure(0, weight=1)
         self.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
@@ -64,7 +63,7 @@ class ImCaptureWindow(ttk.Frame):
 
         # Button Frame
         self._frame1 = ttk.Frame(self)
-        self._frame1.grid(column=0, row=1, sticky=(tk.W, tk.E))
+        self._frame1.grid(column=1, row=0, sticky=(tk.W, tk.E))
         
         # One Image Button
         self._button_image = ttk.Button(self._frame1, text="Take a pic", command=self._one_capture)
@@ -74,24 +73,23 @@ class ImCaptureWindow(ttk.Frame):
         self._frame_name = ttk.Frame(self._frame1)
         self._frame_name.grid(column=0, row=1, padx=padx, pady=pady, sticky=(tk.W, tk.E))
         
-        self._label_name = ttk.Label(self._frame_name, text='Data Name')
+        self._label_name = ttk.Label(self._frame_name, text='Data\nName')
         self._label_name.grid(column=0, row=0)
-        self._entry_name = ttk.Entry(self._frame_name, font=("", 20))
-        self._entry_name.grid(column=1, row=0, sticky=(tk.W, tk.E))
-        self._button_recog_frame = ttk.Button(self._frame_name, text='Detection ON', command=self._toggle_detection)
-        self._button_recog_frame.grid(column=2, row=0, padx=padx, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
+        self._entry_name = ttk.Entry(self._frame_name, width=15, font=("", 20))
+        self._entry_name.grid(column=1, row=0, padx=padx, sticky=(tk.W, tk.E))
+        self._button_recog_frame = ttk.Button(self._frame_name, text='Detection\nON', command=self._toggle_detection)
+        self._button_recog_frame.grid(column=2, row=0, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
         
         # Save Info
         self._label_sav_info = ttk.Label(self._frame1, text='Saved as ')
         self._label_sav_info.grid(column=0, row=2, padx=padx, pady=pady, sticky=(tk.W, tk.E))
         
         # Close
-        self._button_close = ttk.Button(self._frame1, text="Close", command=self._close)
-        self._button_close.grid(column=0, row=3, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
+        self._button_close = ttk.Button(self, text="Close", command=self._close)
+        self._button_close.grid(column=0, row=2, columnspan=2, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
 
-        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=1)
         self._frame1.columnconfigure(0, weight=1)
         self._frame_name.columnconfigure(0, weight=1)
         self._frame_name.columnconfigure(1, weight=1)
