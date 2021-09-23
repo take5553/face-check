@@ -125,6 +125,7 @@ class ImCaptureWindow(ttk.Frame):
             self._file_prefix = 'noname'
         else:
             self._file_prefix = self._data_name.get()
+        self._image_index = 0
         self._get_index()
 
 
@@ -149,9 +150,9 @@ class ImCaptureWindow(ttk.Frame):
     def _toggle_detection(self):
         self._show_detection = not self._show_detection
         if self._show_detection == True:
-            self._button_recog_frame.configure(text='Detection OFF')
+            self._button_recog_frame.configure(text='Detection\nOFF')
         else:
-            self._button_recog_frame.configure(text='Detection ON')
+            self._button_recog_frame.configure(text='Detection\nON')
     
 
     def _update(self):
