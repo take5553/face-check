@@ -1,3 +1,4 @@
+from collections import deque, Counter
 import cv2
 from decimal import Decimal, ROUND_HALF_UP
 import numpy as np
@@ -36,6 +37,8 @@ class RecogWindow(ttk.Frame):
         self._fc.setup_network(dummy)
         
         self._detecting = False
+        self._queue = deque([], 10)
+        self._identified_pause_fl = False
         
         self._camera.running = True
         self.master.protocol("WM_DELETE_WINDOW", self._on_closing)
@@ -78,6 +81,10 @@ class RecogWindow(ttk.Frame):
         self._button_start = ttk.Button(self._frame_others, text='Start', command=self._start_detection)
         self._button_start.grid(column=0, row=1, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
         
+        # Identified
+        self._label_id = ttk.Label(self._frame_others, text='', style='Inference.TLabel')
+        self._label_id.grid(column=0, row=2, padx=padx, pady=pady, sticky=(tk.W, tk.E))
+        
         # Close Button
         self._button_close = ttk.Button(self, text='Close', command=self._close)
         self._button_close.grid(column=0, row=1, columnspan=2, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
@@ -87,6 +94,7 @@ class RecogWindow(ttk.Frame):
         self._frame_others.columnconfigure(0, weight=1)
         self._frame_others.rowconfigure(0, weight=1)
         self._frame_others.rowconfigure(1, weight=1)
+        self._frame_others.rowconfigure(2, weight=1)
         self._frame_infer.columnconfigure(1, weight=1)
         self._frame_infer_answer.columnconfigure(0, weight=1)
 
@@ -116,13 +124,29 @@ class RecogWindow(ttk.Frame):
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         image = PIL.Image.fromarray(frame)
         if self._detecting == True:
-            name, prob = self._fc.identify(frame)            
+            name, prob = self._fc.identify(frame, 0.6)
             self._label_infer.configure(text=name)
             percentage = Decimal(str(prob * 100)).quantize(Decimal('0'), rounding=ROUND_HALF_UP)
             self._label_infer_prob.configure(text='( {} % )'.format(percentage))
+            if self._identified_pause_fl == False:
+                self._queue.append(name)
+                if len(self._queue) == 10:
+                    counter = Counter(self._queue)
+                    mc = counter.most_common()[0]
+                    if mc[1] >= 9 and mc[0] != '':
+                        # identified
+                        self._label_id.configure(text='Identified : {}'.format(mc[0]))
+                        self._identified_pause_fl = True
+                        self.master.after(5000, self._reset_queue)
         self._photo = PIL.ImageTk.PhotoImage(image=image)
         self._canvas1.create_image(self._canvas1.winfo_width() / 2, self._canvas1.winfo_height() / 2, image = self._photo, anchor=tk.CENTER)
         self.master.after(self._delay, self._update)
+        
+        
+    def _reset_queue(self):
+        self._identified_pause_fl = False
+        self._queue.clear()
+        self._label_id.configure(text='')
 
 
 if __name__ == "__main__":

@@ -44,13 +44,16 @@ class FaceCheck():
         return mtcnn.detect(img)
         
         
-    def identify(self, img):
+    def identify(self, img, threshold=0):
         vec = self._get_vec(img)
         if vec is None:
             return '', 0
         result = self._cos_sim_vs2d(self._registered, vec)
         result_idx = result.argmax()
-        return self._file_list[result_idx][:-8], result[result_idx]
+        if result[result_idx] >= threshold:
+            return self._file_list[result_idx][:-8], result[result_idx]
+        else:
+            return '', 0
     
     
     def _cos_sim_vs2d(self, arr, vec):
