@@ -6,6 +6,7 @@ import os
 import PIL.Image, PIL.ImageTk
 import tkinter as tk
 from tkinter import ttk
+from checklist import CheckList
 import json_util as ju
 from mycamera import MyCamera
 from facecheck import FaceCheck
@@ -35,7 +36,7 @@ class RecogWindow(ttk.Frame):
         dummy = cv2.cvtColor(dummy, cv2.COLOR_BGR2RGB)
         self._fc = FaceCheck()
         self._fc.setup_network(dummy)
-        
+        self._cl = CheckList()
         self._detecting = False
         self._queue = deque([], 10)
         self._identified_pause_fl = False
@@ -59,44 +60,70 @@ class RecogWindow(ttk.Frame):
         self._canvas1 = tk.Canvas(self, width = self._canvas_width, height = self._canvas_height)
         self._canvas1.grid(column=0, row=0, sticky=(tk.W, tk.E))
         
-        # Button Frame
+        # Others
         self._frame_others = ttk.Frame(self)
-        self._frame_others.grid(column=1, row=0, sticky=(tk.W, tk.E))
+        self._frame_others.grid(column=1, row=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
         # Detection
         self._frame_infer = ttk.Frame(self._frame_others)
-        self._frame_infer.grid(column=0, row=0, padx=padx, pady=pady, sticky=(tk.W, tk.E))
+        self._frame_infer.grid(column=0, row=1, pady=pady, sticky=(tk.W, tk.E, tk.N, tk.S))
         
-        self._label_infer_pre = ttk.Label(self._frame_infer, text='You are :')
-        self._label_infer_pre.grid(column=0, row=0)
-        self._frame_infer_answer = ttk.Frame(self._frame_infer)
-        self._frame_infer_answer.grid(column=1, row=0, sticky=(tk.W, tk.E))
+        self._frame_infer_once = ttk.Frame(self._frame_infer)
+        self._frame_infer_once.grid(column=0, row=0, sticky=(tk.W, tk.E))
         
+        self._label_infer_pre = ttk.Label(self._frame_infer_once, text='You are :')
+        self._label_infer_pre.grid(column=0, row=0, sticky=tk.W)
+        self._frame_infer_answer = ttk.Frame(self._frame_infer_once)
+        self._frame_infer_answer.grid(column=0, row=1, sticky=(tk.W, tk.E))
         self._label_infer = ttk.Label(self._frame_infer_answer, text='', style='Inference.TLabel')
         self._label_infer.grid(column=0, row=0)
         self._label_infer_prob = ttk.Label(self._frame_infer_answer, text='')
         self._label_infer_prob.grid(column=0, row=1)
         
-        # Start Button
-        self._button_start = ttk.Button(self._frame_others, text='Start', command=self._start_detection)
-        self._button_start.grid(column=0, row=1, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
+        self._frame_infer_conf = ttk.Frame(self._frame_infer)
+        self._frame_infer_conf.grid(column=0, row=2, sticky=(tk.W, tk.E))
+        self._label_id = ttk.Label(self._frame_infer_conf, text='', style='Inference.TLabel')
+        self._label_id.grid(column=0, row=0)
+        self._label_id_name = ttk.Label(self._frame_infer_conf, text='', style='Inference.TLabel')
+        self._label_id_name.grid(column=0, row=1)
         
-        # Identified
-        self._label_id = ttk.Label(self._frame_others, text='', style='Inference.TLabel')
-        self._label_id.grid(column=0, row=2, padx=padx, pady=pady, sticky=(tk.W, tk.E))
+        # Checked List
+        self._frame_checked = ttk.Frame(self._frame_others)
+        self._frame_checked.grid(column=1, row=1, padx=padx, sticky=(tk.W, tk.E, tk.N, tk.S))
+        self._listbox_checked = tk.Listbox(self._frame_checked, width=12, font=('', 20))
+        self._listbox_checked.grid(column=0, row=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        self._scrollbar_checked = ttk.Scrollbar(self._frame_checked, orient=tk.VERTICAL, command=self._listbox_checked.yview)
+        self._listbox_checked['yscrollcommand'] = self._scrollbar_checked.set
+        self._scrollbar_checked.grid(column=1, row=0, sticky=(tk.N, tk.S))
         
+        # Button frame
+        self._frame_buttons = ttk.Frame(self._frame_others)
+        self._frame_buttons.grid(column=0, row=2, columnspan=2, sticky=(tk.W, tk.E))
+        self._button_start = ttk.Button(self._frame_buttons, text='Start', command=self._start_detection)
+        self._button_start.grid(column=0, row=0, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
+        self._button_finish = ttk.Button(self._frame_buttons, text='Finish Check', command=self._finish_checking)
+        self._button_finish.grid(column=1, row=0, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
+                
         # Close Button
         self._button_close = ttk.Button(self, text='Close', command=self._close)
         self._button_close.grid(column=0, row=1, columnspan=2, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
         
         self.columnconfigure(1, weight=1, minsize=400)
         self.rowconfigure(0, weight=1)
-        self._frame_others.columnconfigure(0, weight=1)
-        self._frame_others.rowconfigure(0, weight=1)
+        self._frame_others.columnconfigure(0, weight=1, minsize=250)
+        self._frame_others.rowconfigure(0, minsize=50)
         self._frame_others.rowconfigure(1, weight=1)
-        self._frame_others.rowconfigure(2, weight=1)
-        self._frame_infer.columnconfigure(1, weight=1)
+        self._frame_infer.columnconfigure(0, weight=1)
+        self._frame_infer.rowconfigure(0, weight=1)
+        self._frame_infer.rowconfigure(1, minsize=50)
+        self._frame_infer.rowconfigure(2, weight=1)
+        self._frame_infer_once.columnconfigure(0, weight=1)
+        self._frame_infer_conf.columnconfigure(0, weight=1)
         self._frame_infer_answer.columnconfigure(0, weight=1)
+        self._frame_checked.columnconfigure(0, weight=1)
+        self._frame_checked.rowconfigure(0, weight=1)
+        self._frame_buttons.columnconfigure(0, weight=1)
+        self._frame_buttons.columnconfigure(1, weight=1)
 
         
     def _on_closing(self):
@@ -117,6 +144,14 @@ class RecogWindow(ttk.Frame):
             self._button_start.configure(text='Start')
             self._label_infer.configure(text='')
             self._label_infer_prob.configure(text='')
+            
+            
+    def _finish_checking(self):
+        if self._detecting == True:
+            self._start_detection()
+        file_path = self._cl.finish_checking()
+        tk.messagebox.showinfo('Finish Checking', 'Result Saved : {}'.format(file_path), parent=self.master)
+        self._listbox_checked.delete(0, tk.END)
         
     
     def _update(self):
@@ -128,14 +163,17 @@ class RecogWindow(ttk.Frame):
             self._label_infer.configure(text=name)
             percentage = Decimal(str(prob * 100)).quantize(Decimal('0'), rounding=ROUND_HALF_UP)
             self._label_infer_prob.configure(text='( {} % )'.format(percentage))
-            if self._identified_pause_fl == False:
+            if self._identified_pause_fl == False and (self._cl.has_name(name) and not self._cl.already_checked(name)):
                 self._queue.append(name)
                 if len(self._queue) == 10:
                     counter = Counter(self._queue)
                     mc = counter.most_common()[0]
                     if mc[1] >= 9 and mc[0] != '':
                         # identified
-                        self._label_id.configure(text='Identified : {}'.format(mc[0]))
+                        self._label_id.configure(text='Identified')
+                        self._label_id_name.configure(text=mc[0])
+                        self._cl.add_to_checked(mc[0])
+                        self._listbox_checked.insert(tk.END, mc[0])
                         self._identified_pause_fl = True
                         self.master.after(5000, self._reset_queue)
         self._photo = PIL.ImageTk.PhotoImage(image=image)
@@ -147,6 +185,7 @@ class RecogWindow(ttk.Frame):
         self._identified_pause_fl = False
         self._queue.clear()
         self._label_id.configure(text='')
+        self._label_id_name.configure(text='')
 
 
 if __name__ == "__main__":
