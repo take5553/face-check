@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 from tkinter import ttk
 import json_util as ju
@@ -6,6 +7,10 @@ class ResultWindow(ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self._settings = ju.load()
+        self._result_file_prefix = 'result'
+        self._list_path = self._settings['save_settings']['main_dir']
+        if self._list_path[-1] != '/':
+            self._list_path += '/'
         s = ttk.Style()
         s.configure('TButton', font=("", 20))
         s.configure('TLabel', font=("", 20))
@@ -18,6 +23,8 @@ class ResultWindow(ttk.Frame):
         self.master.protocol("WM_DELETE_WINDOW", self._on_closing)
         
         self._create_widgets()
+        
+        self._set_filelist()
         
     
     def _create_widgets(self):
@@ -32,7 +39,7 @@ class ResultWindow(ttk.Frame):
         
         self._frame_result = ttk.Frame(self._frame_main)
         self._frame_result.grid(column=0, row=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-        self._text_result = tk.Text(self._frame_result)
+        self._text_result = tk.Text(self._frame_result, font=("", 20))
         self._text_result.grid(column=0, row=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         self._scrollbar_result = ttk.Scrollbar(self._frame_result, orient=tk.VERTICAL, command=self._text_result.yview)
         self._text_result['yscrollcommand'] = self._scrollbar_result.set
@@ -40,8 +47,8 @@ class ResultWindow(ttk.Frame):
         
         self._frame_filelist = ttk.Frame(self._frame_main)
         self._frame_filelist.grid(column=1, row=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-        self._listbox_filelist = tk.Listbox(self._frame_filelist, font=('', 20))
-        self._listbox_filelist.grid(colmun=0, row=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        self._listbox_filelist = tk.Listbox(self._frame_filelist, width=len(self._result_file_prefix)+20, font=('', 20))
+        self._listbox_filelist.grid(column=0, row=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         self._scrollbar_filelist = ttk.Scrollbar(self._frame_filelist, orient=tk.VERTICAL, command=self._listbox_filelist.yview)
         self._listbox_filelist['yscrollcommand'] = self._scrollbar_filelist.set
         self._scrollbar_filelist.grid(column=1, row=0, sticky=(tk.N, tk.S))
@@ -56,10 +63,12 @@ class ResultWindow(ttk.Frame):
         self._frame_main.columnconfigure(1, weight=1)
         self._frame_main.rowconfigure(0, weight=1)
         self._frame_result.columnconfigure(0, weight=1)
-        self._frame_result.columnconfigure(1, minsize=20)
+        self._frame_result.columnconfigure(2, minsize=20)
         self._frame_result.rowconfigure(0, weight=1)
         self._frame_filelist.columnconfigure(0, weight=1)
         self._frame_filelist.rowconfigure(0, weight=1)
+        
+        self._listbox_filelist.bind('<<ListboxSelect>>', self._update_textbox)
         
         
     def _on_closing(self):
@@ -68,3 +77,25 @@ class ResultWindow(ttk.Frame):
         
     def _close(self):
         self._on_closing()
+        
+        
+    def _set_filelist(self):
+        file_list = [f for f in sorted(os.listdir(self._list_path), reverse=True) if os.path.isfile(os.path.join(self._list_path, f)) \
+                and f[:len(self._result_file_prefix)] == self._result_file_prefix]
+        self._file_path_list = [os.path.join(self._list_path, f) for f in file_list]
+        listitems = tk.StringVar(value=file_list)
+        self._listbox_filelist.configure(listvariable=listitems)
+        
+        
+    def _update_textbox(self, e):
+        index = e.widget.curselection()
+        with open(self._file_path_list[index[0]]) as f:
+            content = f.read()
+        self._text_result.delete('1.0', 'end')
+        self._text_result.insert('1.0', content)
+        
+
+if __name__ == "__main__":
+    window = tk.Tk()
+    app = ResultWindow(master=window)
+    app.mainloop()

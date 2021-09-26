@@ -82,7 +82,7 @@ class Application(ttk.Frame):
         if self._capture_window == None or not self._capture_window.winfo_exists():
             self._capture_window = tk.Toplevel()
             self._capture = ImCaptureWindow(master=self._capture_window)
-            
+
 
     def _show_capture_ims(self):
         if self._capture_window == None or not self._capture_window.winfo_exists():
