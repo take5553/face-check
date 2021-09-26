@@ -4,33 +4,18 @@ import PIL.Image, PIL.ImageTk
 import random
 import tkinter as tk
 from tkinter import ttk
-import json_util as ju
 from mycamera import MyCamera
+from w_base import BaseWindow
 
-class ImsCaptureWindow(ttk.Frame):
+class ImsCaptureWindow(BaseWindow):
     def __init__(self, master=None):
-        super().__init__(master)
-        self._settings = ju.load()
-        s = ttk.Style()
-        s.configure('TButton', font=("", 20))
-        s.configure('TLabel', font=("", 20))
-        self._camera = MyCamera(width=self._settings['canvas_settings']['canvas_width'], height=self._settings['canvas_settings']['canvas_height'])
-        if self._settings['fullscreen'] == True:
-            self.master.attributes('-zoomed', '1')
-        self.master.columnconfigure(0, weight=1)
-        self.master.rowconfigure(0, weight=1)
-        self.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
+        super().__init__(master)        
+        self._camera = MyCamera(width=self.settings.canvas.width, height=self.settings.canvas.height)
         self.master.title("Capture")
-
-        self._canvas_width = self._settings['canvas_settings']['canvas_width']
-        self._canvas_height = self._settings['canvas_settings']['canvas_height']
-        self._delay = self._settings['canvas_settings']['update_interval']
 
         self._create_widgets()
         
-        self._abspath = self._settings['save_settings']['main_dir']
-        if self._settings['save_settings']['main_dir'][-1] != '/':
-            self._abspath += '/'
+        self._abspath = self.settings.save_dir.main_dir
         self._file_ext = ".jpg"
         self._image_index = [0, 0, 0]
         self._total_im_count = 0
@@ -39,7 +24,6 @@ class ImsCaptureWindow(ttk.Frame):
         self._cap_ims_fl = False
 
         self._camera.running = True
-        self.master.protocol("WM_DELETE_WINDOW", self._on_closing)
         self._update()
         
 
@@ -49,18 +33,14 @@ class ImsCaptureWindow(ttk.Frame):
         pady = 10
         ipadx = 30
         ipady = 20
-        
-        # style = ttk.Style()
-        # style.configure('Debug1.TFrame', background='red')
-        # style.configure('Debug2.TFrame', background='blue')
 
         # Canvas
-        self._canvas1 = tk.Canvas(self, width = self._canvas_width, height = self._canvas_height)
-        self._canvas1.grid(column=0, row=0, sticky=(tk.W, tk.E))
+        self._canvas1 = tk.Canvas(self._frame_main, width = self.settings.canvas.width, height = self.settings.canvas.height)
+        self._canvas1.grid(column=0, row=0, sticky=tk.NSEW)
 
-        # Button Frame
-        self._frame1 = ttk.Frame(self)
-        self._frame1.grid(column=1, row=0, sticky=(tk.W, tk.E))
+        # Others Frame
+        self._frame1 = ttk.Frame(self._frame_main)
+        self._frame1.grid(column=1, row=0, sticky=tk.NSEW)
 
         # Images Button
         self._button_images = ttk.Button(self._frame1, text="Take Continous images", command=self._switch_capture_fl)
@@ -68,7 +48,7 @@ class ImsCaptureWindow(ttk.Frame):
         
         # Save Settings
         self._frame_name = ttk.Frame(self._frame1)
-        self._frame_name.grid(column=0, row=1, pady=pady, sticky=(tk.W, tk.E))
+        self._frame_name.grid(column=0, row=1, pady=pady, sticky=tk.NSEW)
         self._label_name = ttk.Label(self._frame_name, text='Data Name')
         self._label_name.grid(column=0, row=0, padx=10, pady=10)
         self._entry_name = ttk.Entry(self._frame_name, width=1, font=("", 20))
@@ -84,9 +64,9 @@ class ImsCaptureWindow(ttk.Frame):
         self._label_speed_despription2 = ttk.Label(self._frame_speed, text='frame(s)')
         self._label_speed_despription2.grid(column=1, row=1)
         self._label_pic_count = ttk.Label(self._frame_name, text='Capture Limit')
-        self._label_pic_count.grid(column=0, row=4, padx=10)
+        self._label_pic_count.grid(column=0, row=2, padx=10)
         self._frame_pic_count = ttk.Frame(self._frame_name)
-        self._frame_pic_count.grid(column=1, row=4, padx=10, pady=15, sticky=tk.W)
+        self._frame_pic_count.grid(column=1, row=2, padx=10, pady=15, sticky=tk.W)
         self._label_pic_count_pre = ttk.Label(self._frame_pic_count, text='Up to')
         self._label_pic_count_pre.grid(column=0, row=0, columnspan=2, sticky=tk.W)
         self._entry_pic_count = ttk.Entry(self._frame_pic_count, width=5, font=("", 20))
@@ -94,49 +74,38 @@ class ImsCaptureWindow(ttk.Frame):
         self._label_pic_count_sur = ttk.Label(self._frame_pic_count, text='pics')
         self._label_pic_count_sur.grid(column=1, row=1)
         
-        
         # Save State
         self._frame_save_state = ttk.Frame(self._frame1, borderwidth=1, relief='solid')
         self._frame_save_state.grid(column=1, row=1, padx=padx, pady=pady, sticky=(tk.W, tk.E, tk.N, tk.S))
-        
         self._label_save_state = ttk.Label(self._frame_save_state, text='Save Info', anchor='center')
         self._label_save_state.grid(column=0, row=0, columnspan=2, padx=padx, sticky=(tk.W, tk.E))
-        
         self._label_save_description = ttk.Label(self._frame_save_state, text='Total : ')
         self._label_save_description.grid(column=0, row=1, padx=10)
         self._label_save_count = ttk.Label(self._frame_save_state)
         self._label_save_count.grid(column=1, row=1, sticky=tk.W)
-        
         self._label_sub_count = []
-        
         self._label_train_description = ttk.Label(self._frame_save_state, text='Train : ')
         self._label_train_description.grid(column=0, row=2, padx=10)
         self._label_sub_count += [ttk.Label(self._frame_save_state)]
         self._label_sub_count[0].grid(column=1, row=2, sticky=tk.W)
-        
         self._label_valid_description = ttk.Label(self._frame_save_state, text='Valid : ')
         self._label_valid_description.grid(column=0, row=3, padx=10)
         self._label_sub_count += [ttk.Label(self._frame_save_state)]
         self._label_sub_count[1].grid(column=1, row=3, sticky=tk.W)
-        
         self._label_test_description = ttk.Label(self._frame_save_state, text='Test : ')
         self._label_test_description.grid(column=0, row=4, padx=10)
         self._label_sub_count += [ttk.Label(self._frame_save_state)]
         self._label_sub_count[2].grid(column=1, row=4, sticky=tk.W)
 
-        # Close Button
-        self._button_close = ttk.Button(self, text='Close', command=self._close)
-        self._button_close.grid(column=0, row=1, columnspan=2, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
-        
-        self.columnconfigure(1, weight=1)
-        self.rowconfigure(0, weight=1)
+        self._frame_main.columnconfigure(1, weight=1)
+        self._frame_main.rowconfigure(0, weight=1)
         self._frame1.columnconfigure(1, weight=1)
+        self._frame1.rowconfigure(1, weight=1)
         self._frame_save_state.columnconfigure(1, weight=1)
-        self._frame_save_state.rowconfigure(0, weight=1)
-        self._frame_save_state.rowconfigure(1, weight=1)
-        self._frame_save_state.rowconfigure(2, weight=1)
-        self._frame_save_state.rowconfigure(3, weight=1)
-        self._frame_save_state.rowconfigure(4, weight=1)
+        for i in range(3):
+            self._frame_name.rowconfigure(i, weight=1)
+        for i in range(5):
+            self._frame_save_state.rowconfigure(i, weight=1)
         
         self._data_name = tk.StringVar()
         self._entry_name.configure(textvariable=self._data_name)
@@ -185,14 +154,10 @@ class ImsCaptureWindow(ttk.Frame):
             self._button_images.configure(text="Continous images")
 
 
-    def _on_closing(self):
+    def _close(self):
         self._camera.running = False
         self._camera.cap.release()
         self.master.destroy()
-        
-        
-    def _close(self):
-        self._on_closing()
         
         
     def _set_save_dir_order(self):
@@ -230,7 +195,7 @@ class ImsCaptureWindow(ttk.Frame):
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         self._photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(frame))
         self._canvas1.create_image(self._canvas1.winfo_width() / 2, self._canvas1.winfo_height() / 2, image = self._photo, anchor=tk.CENTER)
-        self.master.after(self._delay, self._update)
+        self.master.after(self.settings.canvas.update_interval, self._update)
 
 
 if __name__ == "__main__":

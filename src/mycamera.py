@@ -1,5 +1,5 @@
 from jetcam.usb_camera import USBCamera
-import json_util as ju
+from mysettings import MySettings
 
 
 class MyCamera(USBCamera):
@@ -9,8 +9,8 @@ class MyCamera(USBCamera):
 
 
     def _gst_str(self):
-        settings = ju.load()
-        return settings['gst_str']
+        settings = MySettings()
+        return settings.gst_str
     
     
     def _read(self):

@@ -3,21 +3,13 @@ from tkinter import ttk
 import re
 import device_check as dc
 import gst_builder
-import json_util as ju
+from w_base import BaseWindow
 
 
-class ConfigWindow(ttk.Frame):
+class ConfigWindow(BaseWindow):
     def __init__(self, master=None):
         super().__init__(master)
-        self._settings = ju.load()
-        s = ttk.Style()
-        s.configure('TButton', font=("", 20))
-        s.configure('TLabel', font=("", 20))
-        if self._settings['fullscreen'] == True:
-            self.master.attributes('-zoomed', '1')
-        self.master.columnconfigure(0, weight=1)
-        self.master.rowconfigure(0, weight=1)
-        self.grid(sticky=(tk.E, tk.W, tk.N, tk.S))
+        self.master.title('Config')
         
         self._create_widgets()
         self._set_combo_dev_values()
@@ -38,7 +30,7 @@ class ConfigWindow(ttk.Frame):
         
         # Capture Settings
         
-        self._frame_capture = ttk.Frame(self)
+        self._frame_capture = ttk.Frame(self._frame_main)
         self._frame_capture.grid(column=0, row=0, padx=padx, pady=pady, sticky=(tk.W, tk.E, tk.N))
         
         self._label_captureframe_title = ttk.Label(self._frame_capture, text="Capture")
@@ -77,7 +69,7 @@ class ConfigWindow(ttk.Frame):
         
         # Canvas Settings
         
-        self._frame_canvas = ttk.Frame(self)
+        self._frame_canvas = ttk.Frame(self._frame_main)
         self._frame_canvas.grid(column=1, row=0, padx=padx, pady=pady, sticky=(tk.W, tk.E, tk.N))
         
         self._label_canvasframe_title = ttk.Label(self._frame_canvas, text="Canvas")
@@ -119,7 +111,7 @@ class ConfigWindow(ttk.Frame):
         
         # Save Settings
         
-        self._frame_save = ttk.Frame(self)
+        self._frame_save = ttk.Frame(self._frame_main)
         self._frame_save.grid(column=0, row=1, padx=padx, pady=pady, sticky=(tk.W, tk.E, tk.N))
         
         self._saveframe_title = ttk.Label(self._frame_save, text="Save Settings")
@@ -153,7 +145,7 @@ class ConfigWindow(ttk.Frame):
         
         # Window Settings
         
-        self._frame_window = ttk.Frame(self)
+        self._frame_window = ttk.Frame(self._frame_main)
         self._frame_window.grid(column=1, row=1, padx=padx, pady=pady, sticky=(tk.W, tk.E, tk.N))
         
         self._label_windowtitle = ttk.Label(self._frame_window, text='Window Settings')
@@ -173,25 +165,20 @@ class ConfigWindow(ttk.Frame):
         
         # Save Button
         
-        self._frame_button = ttk.Frame(self)
+        self._frame_button = ttk.Frame(self._frame_main)
         self._frame_button.grid(column=0, row=2, columnspan=2, padx=padx, pady=pady, sticky=tk.E)
 
         self._label_savestate = ttk.Label(self._frame_button)
         self._label_savestate.grid(column=0, row=0, padx=padx, sticky=tk.E)
         self._button_sav = ttk.Button(self._frame_button, text="Save", command=self._save)
         self._button_sav.grid(column=1, row=0, ipadx=ipadx, ipady=ipady)
-        
-        # Close Button
 
-        self._button_close = ttk.Button(self, text='Close', command=self._close)
-        self._button_close.grid(column=0, row=3, columnspan=2, padx=padx, pady=20, ipadx=ipadx, ipady=20, sticky=(tk.W, tk.E))
         
-        self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
-        self.rowconfigure(0, weight=2)
-        self.rowconfigure(1, weight=2)
-        self.rowconfigure(2, weight=1)
-        self.rowconfigure(3, weight=1)
+        self._frame_main.columnconfigure(0, weight=1)
+        self._frame_main.columnconfigure(1, weight=1)
+        self._frame_main.rowconfigure(0, weight=2)
+        self._frame_main.rowconfigure(1, weight=2)
+        self._frame_main.rowconfigure(2, weight=1)
         self._frame_capture.columnconfigure(0, weight=1)
         self._frame_save.columnconfigure(0, weight=1)
         self._frame_canvas.columnconfigure(0, weight=1)
@@ -200,17 +187,17 @@ class ConfigWindow(ttk.Frame):
         
         # Bind Variables
         vcmd = (self.register(lambda target: target.isdecimal() or len(target) == 0), '%P')
-        self._canvas_width_var = tk.IntVar(value=self._settings['canvas_settings']['canvas_width'])
+        self._canvas_width_var = tk.IntVar(value=self.settings.canvas.width)
         self._entry_can_width.configure(textvariable=self._canvas_width_var, validate='key', validatecommand=vcmd)
-        self._canvas_height_var = tk.IntVar(value=self._settings['canvas_settings']['canvas_height'])
+        self._canvas_height_var = tk.IntVar(value=self.settings.canvas.height)
         self._entry_can_height.configure(textvariable=self._canvas_height_var, validate='key', validatecommand=vcmd)
-        self._canvas_fps_var = tk.IntVar(value=self._settings['canvas_settings']['update_interval'])
+        self._canvas_fps_var = tk.IntVar(value=self.settings.canvas.update_interval)
         self._entry_can_fps.configure(textvariable=self._canvas_fps_var, validate='key', validatecommand=vcmd)
-        self._sav_dir = tk.StringVar(value=self._settings['save_settings']['main_dir'])
+        self._sav_dir = tk.StringVar(value=self.settings.save_dir.main_dir)
         self._entry_sav_dir.configure(textvariable=self._sav_dir)
-        self._sav_onedir = tk.StringVar(value=self._settings['save_settings']['onepic_dir'])
+        self._sav_onedir = tk.StringVar(value=self.settings.save_dir.onepic_dir)
         self._entry_sav_onedir.configure(textvariable=self._sav_onedir)
-        self._win_full = tk.BooleanVar(value=self._settings['fullscreen'])
+        self._win_full = tk.BooleanVar(value=self.settings.window.fullscreen)
         self._checkbutton_win_full.configure(variable=self._win_full)
 
         
@@ -219,13 +206,10 @@ class ConfigWindow(ttk.Frame):
         if result == '':
             return
         device_list = result.split()
-        cameras = []
-        for device in device_list:
-            _, device_name = device.split(':')
-            cameras += [device_name]
-        self._combo_dev.configure(values=cameras)
-        for i in range(len(cameras)):
-            if self._settings['camera_mode'] == cameras[i]:
+        self._combo_dev.configure(values=device_list)
+        for i in range(len(device_list)):
+            device_id, connection_method = device_list[i].split(':')
+            if self.settings.camera.device_id == device_id and self.settings.camera.connection_method == connection_method:
                 self._combo_dev.current(i)
                 break
         else:
@@ -237,7 +221,7 @@ class ConfigWindow(ttk.Frame):
             return
         values = []
         self._resolutions = []
-        device_id = dc.get_device_id(self._combo_dev.get())[0]
+        device_id = self._combo_dev.get().split(':')[0]
         formats = dc.get_formats(device_id)
         for format_ in formats:
             for resolution in format_.resolutions:
@@ -245,10 +229,10 @@ class ConfigWindow(ttk.Frame):
                 self._resolutions += [(format_.name, resolution[0], resolution[1], resolution[2])]
         self._combo_res.configure(values=values)
         
-        setting_str = '{} : {}x{} ({:.3f} fps)'.format(self._settings['cap_settings']['cap_mode'], 
-                                                       self._settings['cap_settings']['cap_width'], 
-                                                       self._settings['cap_settings']['cap_height'], 
-                                                       self._settings['cap_settings']['cap_fps'])
+        setting_str = '{} : {}x{} ({:.3f} fps)'.format(self.settings.capture.mode, 
+                                                       self.settings.capture.width, 
+                                                       self.settings.capture.height, 
+                                                       self.settings.capture.fps)
         for i in range(len(values)):
             if setting_str == values[i]:
                 self._combo_res.current(i)
@@ -261,10 +245,12 @@ class ConfigWindow(ttk.Frame):
     def _set_combo_rot_values(self):
         values = ['None', '90 degrees counter clock wise', '180 degrees rotation', '90 degrees clock wise', 'Horizontal flip', 'Upper right diagonal flip', 'Vertical flip', 'Upper left diagonal flip']
         self._combo_rot.configure(values=values)
-        self._combo_rot.current(self._settings['cap_settings']['cap_rotation'])
+        self._combo_rot.current(self.settings.capture.rotation)
 
     def _combo_dev_on_selected(self, e):
-        self._settings['camera_mode'] = e.widget.get()
+        device_id, connection_method = e.widget.get().split(':')
+        self.settings.camera.device_id = device_id
+        self.settings.camera.connection_method = connection_method
         self._set_combo_res_values()
 
 
@@ -273,32 +259,27 @@ class ConfigWindow(ttk.Frame):
         
     
     def _set_selected_resolution(self, index):
-        self._settings['cap_settings']['cap_mode'] = self._resolutions[index][0]
-        self._settings['cap_settings']['cap_width'] = int(self._resolutions[index][1])
-        self._settings['cap_settings']['cap_height'] = int(self._resolutions[index][2])
-        self._settings['cap_settings']['cap_fps'] = float(self._resolutions[index][3])
+        self.settings.capture.mode = self._resolutions[index][0]
+        self.settings.capture.width = int(self._resolutions[index][1])
+        self.settings.capture.height = int(self._resolutions[index][2])
+        self.settings.capture.fps = float(self._resolutions[index][3])
         
         
     def _combo_rot_on_selected(self, e):
-        self._settings['cap_settings']['cap_rotation'] = e.widget.current()
+        self.settings.capture.rotation = e.widget.current()
         
         
     def _save(self):
-        self._settings['canvas_settings']['canvas_width'] = self._canvas_width_var.get()
-        self._settings['canvas_settings']['canvas_height'] = self._canvas_height_var.get()
-        self._settings['canvas_settings']['update_interval'] = self._canvas_fps_var.get()
-        self._settings['save_settings']['main_dir'] = self._sav_dir.get()
-        self._settings['save_settings']['onepic_dir'] = self._sav_onedir.get()
-        self._settings['fullscreen'] = self._win_full.get()
-        self._settings['gst_str'] = gst_builder.get_gst(self._settings)
+        self.settings.canvas.width = self._canvas_width_var.get()
+        self.settings.canvas.height = self._canvas_height_var.get()
+        self.settings.canvas.update_interval = self._canvas_fps_var.get()
+        self.settings.save_dir.main_dir = self._sav_dir.get()
+        self.settings.save_dir.onepic_dir = self._sav_onedir.get()
+        self.settings.window.fullscreen = self._win_full.get()
         
-        ju.save(self._settings)
+        self.settings.save()
         self._label_savestate.configure(text="Save OK")
         self.master.after(2000, lambda: self._label_savestate.configure(text=""))
-        
-        
-    def _close(self):
-        self.master.destroy()
 
 
 if __name__ == "__main__":

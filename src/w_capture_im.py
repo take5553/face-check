@@ -8,38 +8,20 @@ import tkinter as tk
 from tkinter import ttk
 from facenet_pytorch import MTCNN
 import torch
-import json_util as ju
 from mycamera import MyCamera
 from facecheck import FaceCheck
+from w_base import BaseWindow
 
-nn_device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-mtcnn = MTCNN(min_face_size=120, device=nn_device)
-
-class ImCaptureWindow(ttk.Frame):
+class ImCaptureWindow(BaseWindow):
     def __init__(self, master=None):
         super().__init__(master)
-        self._settings = ju.load()
-        s = ttk.Style()
-        s.configure('TButton', font=("", 20))
-        s.configure('TLabel', font=("", 20))
-        self._camera = MyCamera(width=self._settings['canvas_settings']['canvas_width'], height=self._settings['canvas_settings']['canvas_height'])
-        if self._settings['fullscreen'] == True:
-            self.master.attributes('-zoomed', '1')
-        self.master.columnconfigure(0, weight=1)
-        self.master.rowconfigure(0, weight=1)
-        self.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
+        self._camera = MyCamera(width=self.settings.canvas.width, height=self.settings.canvas.height)
         self.master.title("Capture")
-
-        self._canvas_width = self._settings['canvas_settings']['canvas_width']
-        self._canvas_height = self._settings['canvas_settings']['canvas_height']
-        self._delay = self._settings['canvas_settings']['update_interval']
 
         self._create_widgets()
         
         self._cap_im_fl = False
-        self._abspath = self._settings['save_settings']['main_dir']
-        if self._settings['save_settings']['main_dir'][-1] != '/':
-            self._abspath += '/'
+        self._abspath = self.settings.save_dir.main_dir
         self._file_ext = ".jpg"
         self._image_index = 0
         self._fc = FaceCheck()
@@ -49,7 +31,6 @@ class ImCaptureWindow(ttk.Frame):
         self._show_detection = False
 
         self._camera.running = True
-        self.master.protocol("WM_DELETE_WINDOW", self._on_closing)
         self._update()
         
 
@@ -61,42 +42,44 @@ class ImCaptureWindow(ttk.Frame):
         ipady = 20
 
         # Canvas
-        self._canvas1 = tk.Canvas(self, width = self._canvas_width, height = self._canvas_height)
-        self._canvas1.grid(column=0, row=0, sticky=(tk.W, tk.E))
+        self._canvas1 = tk.Canvas(self._frame_main, width = self.settings.canvas.width, height = self.settings.canvas.height)
+        self._canvas1.grid(column=0, row=0, sticky=tk.NSEW)
 
         # Button Frame
-        self._frame1 = ttk.Frame(self)
-        self._frame1.grid(column=1, row=0, sticky=(tk.W, tk.E))
+        self._frame1 = ttk.Frame(self._frame_main)
+        self._frame1.grid(column=1, row=0, sticky=tk.NSEW)
         
         # One Image Button
         self._button_image = ttk.Button(self._frame1, text="Take a pic", command=self._one_capture)
-        self._button_image.grid(column=0, row=0, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
+        self._button_image.grid(column=0, row=0, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=tk.EW)
+        self._button_recog_frame = ttk.Button(self._frame1, text='Detection ON', command=self._toggle_detection)
+        self._button_recog_frame.grid(column=2, row=0, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=tk.EW)
         
         # Save Settings
         self._frame_name = ttk.Frame(self._frame1)
-        self._frame_name.grid(column=0, row=1, padx=padx, pady=pady, sticky=(tk.W, tk.E))
-        
+        self._frame_name.grid(column=0, row=1, columnspan=3, padx=padx, pady=pady, sticky=tk.EW)
         self._label_name = ttk.Label(self._frame_name, text='Data\nName')
         self._label_name.grid(column=0, row=0)
-        self._entry_name = ttk.Entry(self._frame_name, width=15, font=("", 20))
-        self._entry_name.grid(column=1, row=0, padx=padx, sticky=(tk.W, tk.E))
-        self._button_recog_frame = ttk.Button(self._frame_name, text='Detection\nON', command=self._toggle_detection)
-        self._button_recog_frame.grid(column=2, row=0, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
+        self._entry_name = ttk.Entry(self._frame_name, font=("", 20))
+        self._entry_name.grid(column=1, row=0, padx=padx, sticky=tk.EW)
         
         # Save Info
-        self._label_sav_info = ttk.Label(self._frame1, text='Saved as ')
-        self._label_sav_info.grid(column=0, row=2, padx=padx, pady=pady, sticky=(tk.W, tk.E))
-        
-        # Close
-        self._button_close = ttk.Button(self, text="Close", command=self._close)
-        self._button_close.grid(column=0, row=2, columnspan=2, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
+        self._frame_info = ttk.Frame(self._frame1)
+        self._frame_info.grid(column=0, row=2, columnspan=3, padx=padx, pady=pady, sticky=tk.NSEW)
+        self._label_sav_info = ttk.Label(self._frame_info, text='Saved as')
+        self._label_sav_info.grid(column=0, row=0, sticky=tk.W)
+        self._label_sav_path = ttk.Label(self._frame_info)
+        self._label_sav_path.grid(column=0, row=1, sticky=tk.EW)
 
-        self.columnconfigure(1, weight=1)
-        self.rowconfigure(0, weight=1)
+        self._frame_main.columnconfigure(1, weight=1)
+        self._frame_main.rowconfigure(0, weight=1)
         self._frame1.columnconfigure(0, weight=1)
-        self._frame_name.columnconfigure(0, weight=1)
+        self._frame1.columnconfigure(1, minsize=20)
+        self._frame1.columnconfigure(2, weight=1)
+        for i in range(3):
+            self._frame1.rowconfigure(i, weight=1)
         self._frame_name.columnconfigure(1, weight=1)
-        self._frame_name.columnconfigure(2, weight=1)
+        self._frame_info.columnconfigure(0, weight=1)
         
         # Bind
         self._data_name = tk.StringVar()
@@ -119,9 +102,7 @@ class ImCaptureWindow(ttk.Frame):
         
     def _one_capture(self):
         self._cap_im_fl = True
-        self._im_dir = self._settings['save_settings']['onepic_dir']
-        if self._settings['save_settings']['onepic_dir'][-1] != '/':
-            self._im_dir += '/'
+        self._im_dir = self.settings.save_dir.onepic_dir
         if self._data_name.get() == '':
             self._file_prefix = 'noname'
         else:
@@ -130,22 +111,18 @@ class ImCaptureWindow(ttk.Frame):
         self._get_index()
 
 
-    def _on_closing(self):
+    def _close(self):
         self._camera.running = False
         self._camera.cap.release()
         self.master.destroy()
-        
-        
-    def _close(self):
-        self._on_closing()
 
 
     def _toggle_detection(self):
         self._show_detection = not self._show_detection
         if self._show_detection == True:
-            self._button_recog_frame.configure(text='Detection\nOFF')
+            self._button_recog_frame.configure(text='Detection OFF')
         else:
-            self._button_recog_frame.configure(text='Detection\nON')
+            self._button_recog_frame.configure(text='Detection ON')
     
 
     def _update(self):
@@ -153,7 +130,7 @@ class ImCaptureWindow(ttk.Frame):
         if self._cap_im_fl == True:
             file_path = '{}{}{:04}{}'.format(self._abspath + self._im_dir, self._file_prefix, self._image_index, self._file_ext)
             cv2.imwrite(file_path, frame)
-            self._label_sav_info.configure(text='Saved as {}'.format(file_path))
+            self._label_sav_path.configure(text=file_path)
             self._image_index += 1
             self._cap_im_fl = False
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -166,7 +143,7 @@ class ImCaptureWindow(ttk.Frame):
                     draw.rectangle(box.tolist(), outline=(255, 0, 0), width=6)
         self._photo = PIL.ImageTk.PhotoImage(image=image)
         self._canvas1.create_image(self._canvas1.winfo_width() / 2, self._canvas1.winfo_height() / 2, image = self._photo, anchor=tk.CENTER)
-        self.master.after(self._delay, self._update)
+        self.master.after(self.settings.canvas.update_interval, self._update)
 
 
 if __name__ == "__main__":
