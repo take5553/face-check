@@ -5,7 +5,7 @@ import tkinter as tk
 from tkinter import ttk
 from facenet_pytorch import MTCNN, InceptionResnetV1
 import torch
-import json_util as ju
+from mysettings import MySettings
 
 
 nn_device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -16,13 +16,9 @@ resnet = InceptionResnetV1(pretrained='vggface2').eval().to(nn_device)
 class FaceCheck():
     def __init__(self):
         self._registered = []
-        self._settings = ju.load()
-        self._registered_dir = self._settings['save_settings']['main_dir']
-        if self._registered_dir[-1] != '/':
-            self._registered_dir += '/'
-        self._registered_dir += self._settings['save_settings']['onepic_dir']
-        if self._registered_dir[-1] != '/':
-            self._registered_dir += '/'
+        self.settings = MySettings()
+        self._registered_dir = self.settings.save_dir.main_dir
+        self._registered_dir += self.settings.save_dir.onepic_dir
 
 
     def setup_network(self, dummy_im=None, dataset_setup=True):

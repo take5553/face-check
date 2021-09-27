@@ -150,6 +150,14 @@ class ConfigWindow(BaseWindow):
         # ----------
         row += 1
         
+        column = 0
+        self._label_sav_result = ttk.Label(self._frame_save_inner, text="Result Save\nDirectory")
+        self._label_sav_result.grid(column=column, row=row, padx=padx, pady=pady)
+        column += 1
+        self._entry_sav_result = ttk.Entry(self._frame_save_inner, font=(fontfamily, fontsize))
+        self._entry_sav_result.grid(column=column, row=row, sticky=tk.EW, padx=padx, pady=pady)
+        row += 1
+        
         # Window Settings
         
         self._frame_window = ttk.Frame(self._notebook_options, borderwidth=1, relief='solid')
@@ -205,6 +213,8 @@ class ConfigWindow(BaseWindow):
         self._entry_sav_dir.configure(textvariable=self._sav_dir)
         self._sav_onedir = tk.StringVar(value=self.settings.save_dir.onepic_dir)
         self._entry_sav_onedir.configure(textvariable=self._sav_onedir)
+        self._sav_result = tk.StringVar(value=self.settings.save_dir.result_save_dir)
+        self._entry_sav_result.configure(textvariable=self._sav_result)
         self._win_full = tk.BooleanVar(value=self.settings.window.fullscreen)
         self._checkbutton_win_full.configure(variable=self._win_full)
         self._win_fontsize = tk.IntVar(value=self.settings.window.fontsize)
@@ -285,6 +295,7 @@ class ConfigWindow(BaseWindow):
         self.settings.canvas.update_interval = self._canvas_fps_var.get()
         self.settings.save_dir.main_dir = self._sav_dir.get()
         self.settings.save_dir.onepic_dir = self._sav_onedir.get()
+        self.settings.save_dir.result_save_dir = self._sav_result.get()
         self.settings.window.fullscreen = self._win_full.get()
         self.settings.window.fontsize = self._win_fontsize.get()
         

@@ -1,24 +1,22 @@
 import os
 import datetime
-import json_util as ju
+from mysettings import MySettings
 
 class CheckList():
     
+    settings = None
     _check_list = []
     _checked_list = []
     _non_registered_list = []
     
     def __init__(self):
-        self._settings = ju.load()
+        self.settings = MySettings()
         self._checklist_filename = 'checklist.txt'
         self._checkedlist_filename = 'checked.txt'
         
-        self._list_path = self._settings['save_settings']['main_dir']
-        if self._list_path[-1] != '/':
-            self._list_path += '/'
-        self._registered_dir = self._list_path + self._settings['save_settings']['onepic_dir']
-        if self._registered_dir[-1] != '/':
-            self._registered_dir += '/'
+        self._list_path = self.settings.save_dir.main_dir
+        self._registered_dir = self._list_path + self.settings.save_dir.onepic_dir
+        self._result_dir = self.settings.save_dir.result_save_dir
             
         files = sorted(os.listdir(self._registered_dir))
         self._file_list = [os.path.join(self._registered_dir, f) for f in files if os.path.isfile(os.path.join(self._registered_dir, f))]
@@ -72,7 +70,7 @@ class CheckList():
         for name in self._non_registered_list:
             result += name + '\n'
         file_name = 'result{}.txt'.format(dt_now.strftime('%Y%m%d-%H%M%S'))
-        with open(self._list_path + file_name, 'w') as f:
+        with open(self._result_dir + file_name, 'w') as f:
             f.write(result)
         os.remove(self._list_path + self._checkedlist_filename)
         return self._list_path + file_name

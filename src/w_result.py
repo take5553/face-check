@@ -7,7 +7,7 @@ class ResultWindow(BaseWindow):
     def __init__(self, master=None):
         super().__init__(master)
         self._result_file_prefix = 'result'
-        self._list_path = self.settings.save_dir.main_dir
+        self._list_path = self.settings.save_dir.result_save_dir
         self.master.title("Result")
         
         self._create_widgets()

@@ -50,7 +50,8 @@ class MySettings():
             },
             'save_settings' : {
                 'main_dir' : self._save_settings.main_dir,
-                'onepic_dir' : self._save_settings.onepic_dir
+                'onepic_dir' : self._save_settings.onepic_dir,
+                'result_save_dir' : self._save_settings.result_save_dir
             },
             'window_settings' : {
                 'fullscreen' : self._window_settings.fullscreen,
@@ -122,7 +123,8 @@ class MySettings():
                 },
                 'save_settings' : {
                     'main_dir' : os.path.dirname(os.path.abspath(__file__)) + "/data/",
-                    'onepic_dir' : 'onepic/'
+                    'onepic_dir' : 'onepic/',
+                    'result_save_dir' : os.path.dirname(os.path.abspath(__file__)) + "/data/result/"
                 },
                 'window_settings' : {
                     'fullscreen' : True,
@@ -285,6 +287,7 @@ class _SaveSettings():
     
     _main_dir = ''
     _onepic_dir = ''
+    _result_save_dir = ''
     
     
     def __init__(self, save_settings):
@@ -294,6 +297,9 @@ class _SaveSettings():
         self._onepic_dir = save_settings['onepic_dir']
         if self._onepic_dir[-1] != '/':
             self._onepic_dir += '/'
+        self._result_save_dir = save_settings['result_save_dir']
+        if self._result_save_dir[-1] != '/':
+            self._result_save_dir += '/'
         
         
     @property
@@ -319,6 +325,16 @@ class _SaveSettings():
     @property
     def onepic_dir_fullpath(self):
         return self._main_dir + self._onepic_dir
+    
+    
+    @property
+    def result_save_dir(self):
+        return self._result_save_dir
+    
+    
+    @result_save_dir.setter
+    def result_save_dir(self, value):
+        self._result_save_dir = value
         
         
 class _WindowSettings():
