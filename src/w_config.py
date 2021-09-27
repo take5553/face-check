@@ -19,24 +19,37 @@ class ConfigWindow(BaseWindow):
 
     def _create_widgets(self):
         
-        padx = 15
-        pady = 12
+        padx = 20
+        pady = 30
         ipadx = 30
-        ipady = 10
+        ipady = 40
         fontfamily = ''
         fontsize = 20
         
         self.option_add("*TCombobox*Listbox.Font", (fontfamily, fontsize))
+        s = ttk.Style()
+        s.configure('TNotebook.Tab', font=(fontfamily, fontsize))
+        
+        self._notebook_options = ttk.Notebook(self._frame_main)
+        self._notebook_options.grid(column=0, row=0, sticky=tk.NSEW)
+        
+        
+        # Save Button
+        
+        self._frame_button = ttk.Frame(self._frame_main)
+        self._frame_button.grid(column=3, row=0, sticky=tk.NSEW)
+        self._button_sav = ttk.Button(self._frame_button, text="Save", command=self._save)
+        self._button_sav.grid(column=0, row=0, ipadx=ipadx, ipady=ipady)
+        self._label_savestate = ttk.Label(self._frame_button)
+        self._label_savestate.grid(column=0, row=1, pady=pady)
+        
         
         # Capture Settings
         
-        self._frame_capture = ttk.Frame(self._frame_main)
-        self._frame_capture.grid(column=0, row=0, padx=padx, pady=pady, sticky=(tk.W, tk.E, tk.N))
-        
-        self._label_captureframe_title = ttk.Label(self._frame_capture, text="Capture")
-        self._label_captureframe_title.grid(column=0, row=0, sticky=tk.W)
-        self._frame_capture_inner = ttk.Frame(self._frame_capture, borderwidth=1, relief='solid')
-        self._frame_capture_inner.grid(column=0, row=1, sticky=(tk.W, tk.E))
+        self._frame_capture = tk.Frame(self._notebook_options, borderwidth=1, relief='solid')
+        self._notebook_options.add(self._frame_capture, text='Capture', sticky=tk.NSEW)
+        self._frame_capture_inner = ttk.Frame(self._frame_capture)
+        self._frame_capture_inner.grid(column=0, row=0, sticky=tk.NSEW)
 
         row = 0
         
@@ -69,13 +82,10 @@ class ConfigWindow(BaseWindow):
         
         # Canvas Settings
         
-        self._frame_canvas = ttk.Frame(self._frame_main)
-        self._frame_canvas.grid(column=1, row=0, padx=padx, pady=pady, sticky=(tk.W, tk.E, tk.N))
-        
-        self._label_canvasframe_title = ttk.Label(self._frame_canvas, text="Canvas")
-        self._label_canvasframe_title.grid(column=0, row=0, sticky=tk.W)
-        self._frame_canvas_inner = ttk.Frame(self._frame_canvas, borderwidth=1, relief='solid')
-        self._frame_canvas_inner.grid(column=0, row=1, sticky=(tk.W, tk.E))
+        self._frame_canvas = ttk.Frame(self._notebook_options, borderwidth=1, relief='solid')
+        self._notebook_options.add(self._frame_canvas, text="Canvas", sticky=tk.NSEW)
+        self._frame_canvas_inner = ttk.Frame(self._frame_canvas)
+        self._frame_canvas_inner.grid(column=0, row=0, sticky=tk.NSEW)
         
         row = 0
         
@@ -111,13 +121,10 @@ class ConfigWindow(BaseWindow):
         
         # Save Settings
         
-        self._frame_save = ttk.Frame(self._frame_main)
-        self._frame_save.grid(column=0, row=1, padx=padx, pady=pady, sticky=(tk.W, tk.E, tk.N))
-        
-        self._saveframe_title = ttk.Label(self._frame_save, text="Save Settings")
-        self._saveframe_title.grid(column=0, row=0, sticky=tk.W)
-        self._frame_save_inner = ttk.Frame(self._frame_save, borderwidth=1, relief='solid')
-        self._frame_save_inner.grid(column=0, row=1, sticky=(tk.W, tk.E))
+        self._frame_save = ttk.Frame(self._notebook_options, borderwidth=1, relief='solid')
+        self._notebook_options.add(self._frame_save, text="Save Settings", sticky=tk.NSEW)
+        self._frame_save_inner = ttk.Frame(self._frame_save)
+        self._frame_save_inner.grid(column=0, row=0, sticky=tk.NSEW)
         
         row = 0
         
@@ -126,7 +133,7 @@ class ConfigWindow(BaseWindow):
         self._label_sav_dir.grid(column=column, row=row, padx=padx, pady=pady)
         column += 1
         self._entry_sav_dir = ttk.Entry(self._frame_save_inner, font=(fontfamily, fontsize))
-        self._entry_sav_dir.grid(column=column, row=row, sticky=(tk.W, tk.E), padx=padx, pady=pady)
+        self._entry_sav_dir.grid(column=column, row=row, sticky=tk.EW, padx=padx, pady=pady)
         row += 1
         
         column = 0
@@ -134,24 +141,21 @@ class ConfigWindow(BaseWindow):
         self._label_sav_onedir.grid(column=column, row=row, padx=padx, pady=pady)
         column += 1
         self._frame_sav_onedir = ttk.Frame(self._frame_save_inner)
-        self._frame_sav_onedir.grid(column=column, row=row, sticky=tk.W, padx=padx, pady=pady)
+        self._frame_sav_onedir.grid(column=column, row=row, sticky=tk.EW, padx=padx, pady=pady)
         # ----------
         self._label_sav_onedir_pre = ttk.Label(self._frame_sav_onedir, text='(Save Directory)/')
         self._label_sav_onedir_pre.grid(column=0, row=0)
-        self._entry_sav_onedir = ttk.Entry(self._frame_sav_onedir, width=10, font=(fontfamily, fontsize))
-        self._entry_sav_onedir.grid(column=1, row=0, sticky=(tk.W))
+        self._entry_sav_onedir = ttk.Entry(self._frame_sav_onedir, font=(fontfamily, fontsize))
+        self._entry_sav_onedir.grid(column=1, row=0, sticky=tk.EW)
         # ----------
         row += 1
         
         # Window Settings
         
-        self._frame_window = ttk.Frame(self._frame_main)
-        self._frame_window.grid(column=1, row=1, padx=padx, pady=pady, sticky=(tk.W, tk.E, tk.N))
-        
-        self._label_windowtitle = ttk.Label(self._frame_window, text='Window Settings')
-        self._label_windowtitle.grid(column=0, row=0, sticky=tk.W)
-        self._frame_window_inner = ttk.Frame(self._frame_window, borderwidth=1, relief='solid')
-        self._frame_window_inner.grid(column=0, row=1, sticky=(tk.W, tk.E))
+        self._frame_window = ttk.Frame(self._notebook_options, borderwidth=1, relief='solid')
+        self._notebook_options.add(self._frame_window, text='Window Settings', sticky=tk.NSEW)
+        self._frame_window_inner = ttk.Frame(self._frame_window)
+        self._frame_window_inner.grid(column=0, row=0, sticky=tk.NSEW)
         
         row = 0
         
@@ -162,28 +166,24 @@ class ConfigWindow(BaseWindow):
         self._checkbutton_win_full = ttk.Checkbutton(self._frame_window_inner)
         self._checkbutton_win_full.grid(column=column, row=row, sticky=tk.W, padx=padx, pady=pady)
         row += 1
-        
-        # Save Button
-        
-        self._frame_button = ttk.Frame(self._frame_main)
-        self._frame_button.grid(column=0, row=2, columnspan=2, padx=padx, pady=pady, sticky=tk.E)
 
-        self._label_savestate = ttk.Label(self._frame_button)
-        self._label_savestate.grid(column=0, row=0, padx=padx, sticky=tk.E)
-        self._button_sav = ttk.Button(self._frame_button, text="Save", command=self._save)
-        self._button_sav.grid(column=1, row=0, ipadx=ipadx, ipady=ipady)
-
-        
         self._frame_main.columnconfigure(0, weight=1)
-        self._frame_main.columnconfigure(1, weight=1)
-        self._frame_main.rowconfigure(0, weight=2)
-        self._frame_main.rowconfigure(1, weight=2)
-        self._frame_main.rowconfigure(2, weight=1)
-        self._frame_capture.columnconfigure(0, weight=1)
-        self._frame_save.columnconfigure(0, weight=1)
-        self._frame_canvas.columnconfigure(0, weight=1)
-        self._frame_window.columnconfigure(0, weight=1)
+        self._frame_main.columnconfigure(2, minsize=40)
+        self._frame_main.rowconfigure(0, weight=1)
         
+        self._frame_capture.columnconfigure(0, weight=1)
+        self._frame_capture.rowconfigure(0, weight=1)
+        self._frame_capture_inner.columnconfigure(1, weight=1)
+        self._frame_save.columnconfigure(0, weight=1)
+        self._frame_save.rowconfigure(0, weight=1)
+        self._frame_save_inner.columnconfigure(1, weight=1)
+        self._frame_sav_onedir.columnconfigure(1, weight=1)
+        self._frame_canvas.columnconfigure(0, weight=1)
+        self._frame_canvas.rowconfigure(0, weight=1)
+        self._frame_canvas_inner.columnconfigure(1, weight=1)
+        self._frame_window.columnconfigure(0, weight=1)
+        self._frame_window.rowconfigure(0, weight=1)
+        self._frame_window_inner.columnconfigure(1, weight=1)
         
         # Bind Variables
         vcmd = (self.register(lambda target: target.isdecimal() or len(target) == 0), '%P')
