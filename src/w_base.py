@@ -8,8 +8,8 @@ class BaseWindow(ttk.Frame):
         super().__init__(master)
         self.settings = MySettings()
         s = ttk.Style()
-        s.configure('TButton', font=("", 20))
-        s.configure('TLabel', font=("", 20))
+        s.configure('TButton', font=("", self.settings.window.fontsize))
+        s.configure('TLabel', font=("", self.settings.window.fontsize))
         if self.settings.window.fullscreen == True:
             self.master.attributes('-zoomed', '1')
         self.master.columnconfigure(0, weight=1)

@@ -33,6 +33,7 @@ class ImsCaptureWindow(BaseWindow):
         pady = 10
         ipadx = 30
         ipady = 20
+        fontsize = self.settings.window.fontsize
 
         # Canvas
         self._canvas1 = tk.Canvas(self._frame_main, width = self.settings.canvas.width, height = self.settings.canvas.height)
@@ -51,7 +52,7 @@ class ImsCaptureWindow(BaseWindow):
         self._frame_name.grid(column=0, row=1, pady=pady, sticky=tk.NSEW)
         self._label_name = ttk.Label(self._frame_name, text='Data Name')
         self._label_name.grid(column=0, row=0, padx=10, pady=10)
-        self._entry_name = ttk.Entry(self._frame_name, width=1, font=("", 20))
+        self._entry_name = ttk.Entry(self._frame_name, width=1, font=("", fontsize))
         self._entry_name.grid(column=1, row=0, padx=10, pady=10, sticky=(tk.W, tk.E))
         self._label_speed = ttk.Label(self._frame_name, text='Save Speed')
         self._label_speed.grid(column=0, row=1, padx=10)
@@ -59,7 +60,7 @@ class ImsCaptureWindow(BaseWindow):
         self._frame_speed.grid(column=1, row=1, padx=10, pady=15, sticky=tk.W)
         self._label_speed_despription = ttk.Label(self._frame_speed, text='1 save per ')
         self._label_speed_despription.grid(column=0, row=0, columnspan=2, sticky=tk.W)
-        self._entry_speed = ttk.Entry(self._frame_speed, width=5, font=("", 20))
+        self._entry_speed = ttk.Entry(self._frame_speed, width=5, font=("", fontsize))
         self._entry_speed.grid(column=0, row=1)
         self._label_speed_despription2 = ttk.Label(self._frame_speed, text='frame(s)')
         self._label_speed_despription2.grid(column=1, row=1)
@@ -69,7 +70,7 @@ class ImsCaptureWindow(BaseWindow):
         self._frame_pic_count.grid(column=1, row=2, padx=10, pady=15, sticky=tk.W)
         self._label_pic_count_pre = ttk.Label(self._frame_pic_count, text='Up to')
         self._label_pic_count_pre.grid(column=0, row=0, columnspan=2, sticky=tk.W)
-        self._entry_pic_count = ttk.Entry(self._frame_pic_count, width=5, font=("", 20))
+        self._entry_pic_count = ttk.Entry(self._frame_pic_count, width=5, font=("", fontsize))
         self._entry_pic_count.grid(column=0, row=1)
         self._label_pic_count_sur = ttk.Label(self._frame_pic_count, text='pics')
         self._label_pic_count_sur.grid(column=1, row=1)

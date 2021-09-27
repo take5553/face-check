@@ -12,7 +12,7 @@ class MySettings():
     _save_settings = None
     _window_settings = None
     _gst_str = ''
-    _setting_file_path = os.path.join(os.path.dirname(__file__), 'setting2.json')
+    _setting_file_path = os.path.join(os.path.dirname(__file__), 'setting.json')
     _d = {}
     
     
@@ -53,7 +53,8 @@ class MySettings():
                 'onepic_dir' : self._save_settings.onepic_dir
             },
             'window_settings' : {
-                'fullscreen' : self._window_settings.fullscreen
+                'fullscreen' : self._window_settings.fullscreen,
+                'fontsize' : self._window_settings.fontsize
             }
         }
         gst_str = gst_builder.get_gst(self._d)
@@ -124,7 +125,8 @@ class MySettings():
                     'onepic_dir' : 'onepic/'
                 },
                 'window_settings' : {
-                    'fullscreen' : True
+                    'fullscreen' : True,
+                    'fontsize' : 20
                 }
             }
             gst_str = gst_builder.get_gst(d)
@@ -323,10 +325,12 @@ class _WindowSettings():
     
     
     _fullscreen = ''
+    _fontsize = 0
     
     
     def __init__(self, window_settings):
         self._fullscreen = window_settings['fullscreen']
+        self._fontsize = window_settings['fontsize']
         
         
     @property
@@ -337,3 +341,13 @@ class _WindowSettings():
     @fullscreen.setter
     def fullscreen(self, value):
         self._fullscreen = value
+        
+        
+    @property
+    def fontsize(self):
+        return self._fontsize
+    
+    
+    @fontsize.setter
+    def fontsize(self, value):
+        self._fontsize = value

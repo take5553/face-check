@@ -38,6 +38,7 @@ class RecogWindow(BaseWindow):
         pady = 20
         ipadx = 30
         ipady = 20
+        fontsize = self.settings.window.fontsize
         
         s = ttk.Style()
         s.configure('Inference.TLabel', font=("", 40, 'bold'), foreground='red')
@@ -76,7 +77,7 @@ class RecogWindow(BaseWindow):
         # Checked List
         self._frame_checked = ttk.Frame(self._frame_others)
         self._frame_checked.grid(column=1, row=1, padx=padx, sticky=(tk.W, tk.E, tk.N, tk.S))
-        self._listbox_checked = tk.Listbox(self._frame_checked, width=12, font=('', 20))
+        self._listbox_checked = tk.Listbox(self._frame_checked, width=12, font=('', fontsize))
         self._listbox_checked.grid(column=0, row=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         self._scrollbar_checked = ttk.Scrollbar(self._frame_checked, orient=tk.VERTICAL, command=self._listbox_checked.yview)
         self._listbox_checked['yscrollcommand'] = self._scrollbar_checked.set

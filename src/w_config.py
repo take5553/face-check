@@ -24,7 +24,7 @@ class ConfigWindow(BaseWindow):
         ipadx = 30
         ipady = 40
         fontfamily = ''
-        fontsize = 20
+        fontsize = self.settings.window.fontsize
         
         self.option_add("*TCombobox*Listbox.Font", (fontfamily, fontsize))
         s = ttk.Style()
@@ -166,6 +166,14 @@ class ConfigWindow(BaseWindow):
         self._checkbutton_win_full = ttk.Checkbutton(self._frame_window_inner)
         self._checkbutton_win_full.grid(column=column, row=row, sticky=tk.W, padx=padx, pady=pady)
         row += 1
+        
+        column = 0
+        self._label_win_fontsize = ttk.Label(self._frame_window_inner, text="Font Size")
+        self._label_win_fontsize.grid(column=column, row=row, padx=padx, pady=pady)
+        column += 1
+        self._entry_win_fontsize = ttk.Entry(self._frame_window_inner, width=4, font=(fontfamily, fontsize))
+        self._entry_win_fontsize.grid(column=column, row=row, sticky=tk.W, padx=padx, pady=pady)
+        row +=1
 
         self._frame_main.columnconfigure(0, weight=1)
         self._frame_main.columnconfigure(2, minsize=40)
@@ -199,6 +207,8 @@ class ConfigWindow(BaseWindow):
         self._entry_sav_onedir.configure(textvariable=self._sav_onedir)
         self._win_full = tk.BooleanVar(value=self.settings.window.fullscreen)
         self._checkbutton_win_full.configure(variable=self._win_full)
+        self._win_fontsize = tk.IntVar(value=self.settings.window.fontsize)
+        self._entry_win_fontsize.configure(textvariable=self._win_fontsize, validate='key', validatecommand=vcmd)
 
         
     def _set_combo_dev_values(self):
@@ -276,6 +286,7 @@ class ConfigWindow(BaseWindow):
         self.settings.save_dir.main_dir = self._sav_dir.get()
         self.settings.save_dir.onepic_dir = self._sav_onedir.get()
         self.settings.window.fullscreen = self._win_full.get()
+        self.settings.window.fontsize = self._win_fontsize.get()
         
         self.settings.save()
         self._label_savestate.configure(text="Save OK")

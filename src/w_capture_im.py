@@ -40,6 +40,7 @@ class ImCaptureWindow(BaseWindow):
         pady = 20
         ipadx = 30
         ipady = 20
+        fontsize = self.settings.window.fontsize
 
         # Canvas
         self._canvas1 = tk.Canvas(self._frame_main, width = self.settings.canvas.width, height = self.settings.canvas.height)
@@ -60,7 +61,7 @@ class ImCaptureWindow(BaseWindow):
         self._frame_name.grid(column=0, row=1, columnspan=3, padx=padx, pady=pady, sticky=tk.EW)
         self._label_name = ttk.Label(self._frame_name, text='Data\nName')
         self._label_name.grid(column=0, row=0)
-        self._entry_name = ttk.Entry(self._frame_name, font=("", 20))
+        self._entry_name = ttk.Entry(self._frame_name, font=("", fontsize))
         self._entry_name.grid(column=1, row=0, padx=padx, sticky=tk.EW)
         
         # Save Info

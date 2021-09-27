@@ -21,6 +21,7 @@ class RegisteredListWindow(BaseWindow):
         pady = 20
         ipadx = 30
         ipady = 20
+        fontsize = self.settings.window.fontsize
         
         # self._frame_main is defined in BaseWindow
         
@@ -37,7 +38,7 @@ class RegisteredListWindow(BaseWindow):
         self._frame_list.grid(column=0, row=0, sticky=tk.NSEW)
         self._label_list = ttk.Label(self._frame_list, text='Registered Pics')
         self._label_list.grid(column=0, row=0, columnspan=2, sticky=tk.W)
-        self._listbox_list = tk.Listbox(self._frame_list, font=('', 20))
+        self._listbox_list = tk.Listbox(self._frame_list, font=('', fontsize))
         self._listbox_list.grid(column=0, row=1, sticky=tk.NSEW)
         self._scrollbar_list = ttk.Scrollbar(self._frame_list, orient=tk.VERTICAL, command=self._listbox_list.yview)
         self._listbox_list['yscrollcommand'] = self._scrollbar_list.set

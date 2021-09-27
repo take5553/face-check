@@ -17,7 +17,7 @@ class ResultWindow(BaseWindow):
     
     def _create_widgets(self):
 
-        fontsize = 20
+        fontsize = self.settings.window.fontsize
         
         # self._frame_main is defined in BaseWindow
         
