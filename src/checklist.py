@@ -70,6 +70,7 @@ class CheckList():
         for name in self._non_registered_list:
             result += name + '\n'
         file_name = 'result{}.txt'.format(dt_now.strftime('%Y%m%d-%H%M%S'))
+        os.makedirs(self._result_dir, exist_ok=True)
         with open(self._result_dir + file_name, 'w') as f:
             f.write(result)
         os.remove(self._list_path + self._checkedlist_filename)
