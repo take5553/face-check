@@ -143,18 +143,21 @@ class RecogWindow(BaseWindow):
             percentage = Decimal(str(prob * 100)).quantize(Decimal('0'), rounding=ROUND_HALF_UP)
             self._label_infer_prob.configure(text='( {} % )'.format(percentage))
             if self._identified_pause_fl == False and (self._cl.has_name(name) and not self._cl.already_checked(name)):
-                self._queue.append(name)
-                if len(self._queue) == 10:
-                    counter = Counter(self._queue)
-                    mc = counter.most_common()[0]
-                    if mc[1] >= 9 and mc[0] != '':
-                        # identified
-                        self._label_id.configure(text='Identified')
-                        self._label_id_name.configure(text=mc[0])
-                        self._cl.add_to_checked(mc[0])
-                        self._listbox_checked.insert(tk.END, mc[0])
-                        self._identified_pause_fl = True
-                        self.master.after(5000, self._reset_queue)
+                if name == '':
+                    self._queue.clear()
+                else:
+                    self._queue.append(name)
+                    if len(self._queue) == 10:
+                        counter = Counter(self._queue)
+                        mc = counter.most_common()[0]
+                        if mc[1] >= 9 and mc[0] != '':
+                            # identified
+                            self._label_id.configure(text='Confirmed')
+                            self._label_id_name.configure(text=mc[0])
+                            self._cl.add_to_checked(mc[0])
+                            self._listbox_checked.insert(tk.END, mc[0])
+                            self._identified_pause_fl = True
+                            self.master.after(5000, self._reset_queue)
         self._photo = PIL.ImageTk.PhotoImage(image=image)
         self._canvas1.create_image(self._canvas1.winfo_width() / 2, self._canvas1.winfo_height() / 2, image = self._photo, anchor=tk.CENTER)
         self.master.after(self.settings.canvas.update_interval, self._update)

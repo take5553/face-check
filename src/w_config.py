@@ -158,6 +158,23 @@ class ConfigWindow(BaseWindow):
         self._entry_sav_result.grid(column=column, row=row, sticky=tk.EW, padx=padx, pady=pady)
         row += 1
         
+        # Recognition Settings
+        
+        self._frame_recog = ttk.Frame(self._notebook_options, borderwidth=1, relief='solid')
+        self._notebook_options.add(self._frame_recog, text='Recognition', sticky=tk.NSEW)
+        self._frame_recog_inner = ttk.Frame(self._frame_recog)
+        self._frame_recog_inner.grid(column=0, row=0, sticky=tk.NSEW)
+        
+        row = 0
+        
+        column = 0
+        self._label_conf_sound = ttk.Label(self._frame_recog_inner, text="Confirmation\nSound")
+        self._label_conf_sound.grid(column=column, row=row, padx=padx, pady=pady)
+        column += 1
+        self._entry_conf_sound = ttk.Entry(self._frame_recog_inner, font=(fontfamily, fontsize))
+        self._entry_conf_sound.grid(column=column, row=row, sticky=tk.EW, padx=padx, pady=pady)
+        row += 1
+        
         # Window Settings
         
         self._frame_window = ttk.Frame(self._notebook_options, borderwidth=1, relief='solid')
@@ -197,6 +214,9 @@ class ConfigWindow(BaseWindow):
         self._frame_canvas.columnconfigure(0, weight=1)
         self._frame_canvas.rowconfigure(0, weight=1)
         self._frame_canvas_inner.columnconfigure(1, weight=1)
+        self._frame_recog.columnconfigure(0, weight=1)
+        self._frame_recog.rowconfigure(0, weight=1)
+        self._frame_recog_inner.columnconfigure(1, weight=1)
         self._frame_window.columnconfigure(0, weight=1)
         self._frame_window.rowconfigure(0, weight=1)
         self._frame_window_inner.columnconfigure(1, weight=1)
@@ -217,6 +237,8 @@ class ConfigWindow(BaseWindow):
         self._entry_sav_result.configure(textvariable=self._sav_result)
         self._win_full = tk.BooleanVar(value=self.settings.window.fullscreen)
         self._checkbutton_win_full.configure(variable=self._win_full)
+        self._conf_sound = tk.StringVar(value=self.settings.recognition.confirmation_sound)
+        self._entry_conf_sound.configure(textvariable=self._conf_sound)
         self._win_fontsize = tk.IntVar(value=self.settings.window.fontsize)
         self._entry_win_fontsize.configure(textvariable=self._win_fontsize, validate='key', validatecommand=vcmd)
 
@@ -296,6 +318,7 @@ class ConfigWindow(BaseWindow):
         self.settings.save_dir.main_dir = self._sav_dir.get()
         self.settings.save_dir.onepic_dir = self._sav_onedir.get()
         self.settings.save_dir.result_save_dir = self._sav_result.get()
+        self.settings.recognition.confirmation_sound = self._conf_sound.get()
         self.settings.window.fullscreen = self._win_full.get()
         self.settings.window.fontsize = self._win_fontsize.get()
         

@@ -10,6 +10,7 @@ class MySettings():
     _capture_settings = None
     _canvas_settings = None
     _save_settings = None
+    _recognition_settings = None
     _window_settings = None
     _gst_str = ''
     _setting_file_path = os.path.join(os.path.dirname(__file__), 'setting.json')
@@ -26,6 +27,7 @@ class MySettings():
         self._capture_settings = _CaptureSettings(self._d['capture_settings'])
         self._canvas_settings = _CanvasSettings(self._d['canvas_settings'])
         self._save_settings = _SaveSettings(self._d['save_settings'])
+        self._recognition_settings = _RecognitionSettings(self._d['recognition_settings'])
         self._window_settings = _WindowSettings(self._d['window_settings'])
         self._gst_str = self._d['gst_str']
         
@@ -52,6 +54,9 @@ class MySettings():
                 'main_dir' : self._save_settings.main_dir,
                 'onepic_dir' : self._save_settings.onepic_dir,
                 'result_save_dir' : self._save_settings.result_save_dir
+            },
+            'recognition_settings' : {
+                'confirmation_sound' : self._recognition_settings.confirmation_sound
             },
             'window_settings' : {
                 'fullscreen' : self._window_settings.fullscreen,
@@ -81,6 +86,11 @@ class MySettings():
     @property
     def save_dir(self):
         return self._save_settings
+    
+    
+    @property
+    def recognition(self):
+        return self._recognition_settings
     
     
     @property
@@ -125,6 +135,9 @@ class MySettings():
                     'main_dir' : os.path.dirname(os.path.abspath(__file__)) + "/data/",
                     'onepic_dir' : 'onepic/',
                     'result_save_dir' : os.path.dirname(os.path.abspath(__file__)) + "/data/result/"
+                },
+                'recognition_settings' :{
+                    'confirmation_sound' : ''
                 },
                 'window_settings' : {
                     'fullscreen' : True,
@@ -335,6 +348,26 @@ class _SaveSettings():
     @result_save_dir.setter
     def result_save_dir(self, value):
         self._result_save_dir = value
+        
+        
+class _RecognitionSettings():
+    
+    
+    _confirmation_sound = ''
+    
+    
+    def __init__(self, recognition_settings):
+        self._confirmation_sound = recognition_settings['confirmation_sound']
+        
+        
+    @property
+    def confirmation_sound(self):
+        return self._confirmation_sound
+    
+    
+    @confirmation_sound.setter
+    def confirmation_sound(self, value):
+        self._confirmation_sound = value
         
         
 class _WindowSettings():
