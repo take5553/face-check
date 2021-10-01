@@ -39,12 +39,14 @@ RUN apt update \
     && apt install -y --no-install-recommends \
            nano \
            python3-tk \
+           python3-gi \
            v4l-utils \
+           pulseaudio \
     && rm -rf /var/lib/apt/lists/* \
     && apt clean
         
 RUN python3 -m pip install -U pip setuptools \
-    && python3 -m pip install --no-cache-dir traitlets facenet-pytorch
+    && python3 -m pip install --no-cache-dir traitlets facenet-pytorch playsound
     
 RUN git clone --branch=master --depth=1 https://github.com/NVIDIA-AI-IOT/jetcam \
     && cd jetcam \
