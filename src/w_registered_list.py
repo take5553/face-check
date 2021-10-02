@@ -75,6 +75,8 @@ class RegisteredListWindow(BaseWindow):
         
     def _delete_pic(self):
         index = self._listbox_list.curselection()
+        if len(index) == 0:
+            return
         file_path = os.path.join(self.settings.save_dir.onepic_dir_fullpath, self._file_list[index[0]])
         ret = tk.messagebox.askyesno('Confirm', 'Delete {} ?'.format(file_path), parent=self.master)
         if ret == True:

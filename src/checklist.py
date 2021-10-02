@@ -23,6 +23,10 @@ class CheckList():
         
     def add_to_checked(self, name):
         self._checked_list.append(name)
+        self._save_checked_list()
+    
+        
+    def _save_checked_list(self):
         s = '\n'.join(self._checked_list)
         with open(self._list_path + self._checkedlist_filename, 'w') as f:
             f.write(s)
@@ -60,6 +64,11 @@ class CheckList():
                 
     def get_checked_list(self):
         return self._checked_list
+    
+    
+    def delete_from_checked_list(self, index):
+        del self._checked_list[index]
+        self._save_checked_list()
 
     
     def finish_checking(self):

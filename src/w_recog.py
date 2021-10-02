@@ -87,19 +87,25 @@ class RecogWindow(BaseWindow):
         # Checked List
         self._frame_checked = ttk.Frame(self._frame_others)
         self._frame_checked.grid(column=1, row=1, padx=padx, sticky=(tk.W, tk.E, tk.N, tk.S))
-        self._listbox_checked = tk.Listbox(self._frame_checked, width=12, font=('', fontsize))
+        
+        self._frame_checked_inner = ttk.Frame(self._frame_checked)
+        self._frame_checked_inner.grid(column=0, row=0, sticky=tk.NSEW)
+        self._listbox_checked = tk.Listbox(self._frame_checked_inner, width=12, font=('', fontsize))
         self._listbox_checked.grid(column=0, row=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-        self._scrollbar_checked = ttk.Scrollbar(self._frame_checked, orient=tk.VERTICAL, command=self._listbox_checked.yview)
+        self._scrollbar_checked = ttk.Scrollbar(self._frame_checked_inner, orient=tk.VERTICAL, command=self._listbox_checked.yview)
         self._listbox_checked['yscrollcommand'] = self._scrollbar_checked.set
         self._scrollbar_checked.grid(column=1, row=0, sticky=(tk.N, tk.S))
+        self._button_delete = ttk.Button(self._frame_checked, text='Delete', command=self._delete_confirmation)
+        self._button_delete.grid(column=0, row=2, ipadx=ipadx, ipady=5, sticky=tk.EW)
         
         # Button frame
         self._frame_buttons = ttk.Frame(self._frame_others)
-        self._frame_buttons.grid(column=0, row=2, columnspan=2, sticky=(tk.W, tk.E))
+        self._frame_buttons.grid(column=0, row=2, columnspan=2, sticky=tk.EW)
         self._button_start = ttk.Button(self._frame_buttons, text='Start', command=self._start_detection)
-        self._button_start.grid(column=0, row=0, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
+        self._button_start.grid(column=0, row=0, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=tk.EW)
         self._button_finish = ttk.Button(self._frame_buttons, text='Finish Check', command=self._finish_checking)
-        self._button_finish.grid(column=1, row=0, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
+        self._button_finish.grid(column=1, row=0, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=tk.EW)
+        
         
         self._frame_main.columnconfigure(1, weight=1, minsize=400)
         self._frame_main.rowconfigure(0, weight=1)
@@ -115,6 +121,9 @@ class RecogWindow(BaseWindow):
         self._frame_infer_answer.columnconfigure(0, weight=1)
         self._frame_checked.columnconfigure(0, weight=1)
         self._frame_checked.rowconfigure(0, weight=1)
+        self._frame_checked_inner.columnconfigure(0, weight=1)
+        self._frame_checked_inner.rowconfigure(0, weight=1)
+        self._frame_checked_inner.rowconfigure(1, minsize=20)
         self._frame_buttons.columnconfigure(0, weight=1)
         self._frame_buttons.columnconfigure(1, weight=1)
 
@@ -122,6 +131,7 @@ class RecogWindow(BaseWindow):
     def _close(self):
         self._camera.running = False
         self._camera.cap.release()
+        self._sound_thread = None
         self.master.destroy()
         
         
@@ -141,6 +151,19 @@ class RecogWindow(BaseWindow):
         file_path = self._cl.finish_checking()
         tk.messagebox.showinfo('Finish Checking', 'Result Saved : {}'.format(file_path), parent=self.master)
         self._listbox_checked.delete(0, tk.END)
+        
+        
+    def _delete_confirmation(self):
+        index = self._listbox_checked.curselection()
+        if len(index) == 0:
+            return
+        name = self._listbox_checked.get(index[0])
+        if isinstance(name, tuple):
+            name = name[0]
+        answer = tk.messagebox.askokcancel('Delete', 'Make sure you are deleting\n\n    {}\n'.format(name), parent=self.master)
+        if answer:
+            self._listbox_checked.delete(index[0])
+            self._cl.delete_from_checked_list(index[0])
         
     
     def _update(self):
