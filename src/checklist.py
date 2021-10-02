@@ -17,7 +17,24 @@ class CheckList():
         self._list_path = self.settings.save_dir.main_dir
         self._registered_dir = self._list_path + self.settings.save_dir.onepic_dir
         self._result_dir = self.settings.save_dir.result_save_dir
-            
+        
+        
+    def add_to_checked(self, name):
+        self._checked_list.append(name)
+        s = '\n'.join(self._checked_list)
+        with open(self._list_path + self._checkedlist_filename, 'w') as f:
+            f.write(s)
+        
+        
+    def has_name(self, name):
+        return name in self._check_list
+        
+        
+    def already_checked(self, name):
+        return name in self._checked_list
+    
+    
+    def init_checking(self):
         files = sorted(os.listdir(self._registered_dir))
         self._file_list = [os.path.join(self._registered_dir, f) for f in files if os.path.isfile(os.path.join(self._registered_dir, f))]
         registered_list = [s[:-8] for s in files]
@@ -37,21 +54,6 @@ class CheckList():
         else:
             with open(self._list_path + self._checkedlist_filename, 'r') as f:
                 self._checked_list = [s.strip() for s in f.readlines()]
-        
-        
-    def add_to_checked(self, name):
-        self._checked_list.append(name)
-        s = '\n'.join(self._checked_list)
-        with open(self._list_path + self._checkedlist_filename, 'w') as f:
-            f.write(s)
-        
-        
-    def has_name(self, name):
-        return name in self._check_list
-        
-        
-    def already_checked(self, name):
-        return name in self._checked_list
 
     
     def finish_checking(self):

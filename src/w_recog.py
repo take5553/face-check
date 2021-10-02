@@ -4,6 +4,8 @@ from decimal import Decimal, ROUND_HALF_UP
 import numpy as np
 import os
 import PIL.Image, PIL.ImageTk
+from playsound import playsound
+import threading
 import tkinter as tk
 from tkinter import ttk
 from checklist import CheckList
@@ -27,6 +29,11 @@ class RecogWindow(BaseWindow):
         self._detecting = False
         self._queue = deque([], 10)
         self._identified_pause_fl = False
+        
+        if self.settings.recognition.confirmation_sound != '':
+            self._sound_thread = threading.Thread(target=self._play_sound)
+        else:
+            self._sound_thread = None
         
         self._camera.running = True
         self._update()
@@ -119,6 +126,7 @@ class RecogWindow(BaseWindow):
         self._detecting = not self._detecting
         if self._detecting == True:
             self._button_start.configure(text='Stop')
+            self._cl.init_checking()
         else:
             self._button_start.configure(text='Start')
             self._label_infer.configure(text='')
@@ -157,13 +165,22 @@ class RecogWindow(BaseWindow):
                             self._cl.add_to_checked(mc[0])
                             self._listbox_checked.insert(tk.END, mc[0])
                             self._identified_pause_fl = True
+                            if self._sound_thread != None:
+                                self._sound_thread.start()
                             self.master.after(5000, self._reset_queue)
         self._photo = PIL.ImageTk.PhotoImage(image=image)
         self._canvas1.create_image(self._canvas1.winfo_width() / 2, self._canvas1.winfo_height() / 2, image = self._photo, anchor=tk.CENTER)
         self.master.after(self.settings.canvas.update_interval, self._update)
         
         
+    def _play_sound(self):
+        playsound(self.settings.recognition.confirmation_sound)
+        
+        
     def _reset_queue(self):
+        if self._sound_thread != None:
+            self._sound_thread.join()
+            self._sound_thread = threading.Thread(target=self._play_sound)
         self._identified_pause_fl = False
         self._queue.clear()
         self._label_id.configure(text='')
