@@ -18,6 +18,8 @@ class CheckList():
         self._registered_dir = self._list_path + self.settings.save_dir.onepic_dir
         self._result_dir = self.settings.save_dir.result_save_dir
         
+        self.init_checking()
+        
         
     def add_to_checked(self, name):
         self._checked_list.append(name)
@@ -54,6 +56,10 @@ class CheckList():
         else:
             with open(self._list_path + self._checkedlist_filename, 'r') as f:
                 self._checked_list = [s.strip() for s in f.readlines()]
+                
+                
+    def get_checked_list(self):
+        return self._checked_list
 
     
     def finish_checking(self):
@@ -76,4 +82,5 @@ class CheckList():
         with open(self._result_dir + file_name, 'w') as f:
             f.write(result)
         os.remove(self._list_path + self._checkedlist_filename)
+        self._checked_list = []
         return self._list_path + file_name

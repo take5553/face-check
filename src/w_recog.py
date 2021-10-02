@@ -30,6 +30,9 @@ class RecogWindow(BaseWindow):
         self._queue = deque([], 10)
         self._identified_pause_fl = False
         
+        if len(self._cl.get_checked_list()) > 0:
+                self._listbox_checked.insert(tk.END, self._cl.get_checked_list())
+        
         if self.settings.recognition.confirmation_sound != '':
             self._sound_thread = threading.Thread(target=self._play_sound)
         else:
@@ -126,7 +129,6 @@ class RecogWindow(BaseWindow):
         self._detecting = not self._detecting
         if self._detecting == True:
             self._button_start.configure(text='Stop')
-            self._cl.init_checking()
         else:
             self._button_start.configure(text='Start')
             self._label_infer.configure(text='')
