@@ -48,7 +48,7 @@ class ImCaptureWindow(BaseWindow):
 
         # Button Frame
         self._frame1 = ttk.Frame(self._frame_main)
-        self._frame1.grid(column=1, row=0, sticky=tk.NSEW)
+        self._frame1.grid(column=2, row=0, sticky=tk.NSEW)
         
         # One Image Button
         self._button_image = ttk.Button(self._frame1, text="Take a pic", command=self._one_capture)
@@ -72,7 +72,8 @@ class ImCaptureWindow(BaseWindow):
         self._label_sav_path = ttk.Label(self._frame_info)
         self._label_sav_path.grid(column=0, row=1, sticky=tk.EW)
 
-        self._frame_main.columnconfigure(1, weight=1)
+        self._frame_main.columnconfigure(1, minsize=30)
+        self._frame_main.columnconfigure(2, weight=1)
         self._frame_main.rowconfigure(0, weight=1)
         self._frame1.columnconfigure(0, weight=1)
         self._frame1.columnconfigure(1, minsize=20)

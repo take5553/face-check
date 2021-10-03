@@ -14,7 +14,13 @@ This application is supporsed to run on NVIDIA Jetson Nano. Here is the detail.
 
 ## Install
 
-(under construction)
+~~~
+git clone https://github.com/take5553/face-check.git
+chmod +x face-check/run.sh
+face-check/run.sh
+~~~
+
+
 
 ## Usage
 

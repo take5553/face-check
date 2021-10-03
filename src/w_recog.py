@@ -106,8 +106,8 @@ class RecogWindow(BaseWindow):
         self._button_finish = ttk.Button(self._frame_buttons, text='Finish Check', command=self._finish_checking)
         self._button_finish.grid(column=1, row=0, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=tk.EW)
         
-        
-        self._frame_main.columnconfigure(1, weight=1, minsize=400)
+        self._frame_main.columnconfigure(1, minsize=30)
+        self._frame_main.columnconfigure(2, weight=1, minsize=400)
         self._frame_main.rowconfigure(0, weight=1)
         self._frame_others.columnconfigure(0, weight=1, minsize=250)
         self._frame_others.rowconfigure(0, minsize=50)

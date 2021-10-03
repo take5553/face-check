@@ -127,14 +127,14 @@ class MySettings():
                     'rotation' : 0
                 },
                 'canvas_settings' : {
-                    'width' : 500,
+                    'width' : 400,
                     'height' : 400,
                     'update_interval' : 30
                 },
                 'save_settings' : {
-                    'main_dir' : os.path.dirname(os.path.abspath(__file__)) + "/data/",
-                    'onepic_dir' : 'onepic/',
-                    'result_save_dir' : os.path.dirname(os.path.abspath(__file__)) + "/data/result/"
+                    'main_dir' : os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../data/")),
+                    'onepic_dir' : 'register/',
+                    'result_save_dir' : os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../data/result/"))
                 },
                 'recognition_settings' :{
                     'confirmation_sound' : ''

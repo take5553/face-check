@@ -49,7 +49,7 @@ class RegisteredListWindow(BaseWindow):
         self._button_delete.grid(column=0, row=1, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
 
         self._frame_main.columnconfigure(0, weight=2)
-        self._frame_main.columnconfigure(1, minsize=20)
+        self._frame_main.columnconfigure(1, minsize=30)
         self._frame_main.columnconfigure(2, weight=1, minsize=200)
         self._frame_main.rowconfigure(0, weight=1)
         self._frame_others.columnconfigure(0, weight=1)
