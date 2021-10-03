@@ -26,13 +26,13 @@ class RecogWindow(BaseWindow):
         self._fc = FaceCheck()
         self._fc.setup_network(dummy)
         self._cl = CheckList()
-        self._detecting = False
         self._queue = deque([], 10)
         self._identified_pause_fl = False
-        
+        self._detecting = 0
         if len(self._cl.get_checked_list()) > 0:
                 self._listbox_checked.insert(tk.END, self._cl.get_checked_list())
-        
+                self._detecting = 2
+        self._switch_detection_state()
         if self.settings.recognition.confirmation_sound != '':
             self._sound_thread = threading.Thread(target=self._play_sound)
         else:
@@ -101,7 +101,7 @@ class RecogWindow(BaseWindow):
         # Button frame
         self._frame_buttons = ttk.Frame(self._frame_others)
         self._frame_buttons.grid(column=0, row=2, columnspan=2, sticky=tk.EW)
-        self._button_start = ttk.Button(self._frame_buttons, text='Start', command=self._start_detection)
+        self._button_start = ttk.Button(self._frame_buttons, command=self._start_detection)
         self._button_start.grid(column=0, row=0, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=tk.EW)
         self._button_finish = ttk.Button(self._frame_buttons, text='Finish Check', command=self._finish_checking)
         self._button_finish.grid(column=1, row=0, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=tk.EW)
@@ -135,22 +135,37 @@ class RecogWindow(BaseWindow):
         self.master.destroy()
         
         
-    def _start_detection(self):
-        self._detecting = not self._detecting
-        if self._detecting == True:
-            self._button_start.configure(text='Stop')
-        else:
+    def _switch_detection_state(self):
+        # 0: not started  1: detecting  2: paused
+        if self._detecting == 0:
             self._button_start.configure(text='Start')
+            self._button_finish.configure(state=tk.DISABLED)
+            self._label_infer.configure(text='')
+            self._label_infer_prob.configure(text='')
+        elif self._detecting == 1:
+            self._button_start.configure(text='Pause')
+            self._button_finish.configure(state=tk.NORMAL)
+        elif self._detecting == 2:
+            self._button_start.configure(text='Restart')
+            self._button_finish.configure(state=tk.NORMAL)
             self._label_infer.configure(text='')
             self._label_infer_prob.configure(text='')
             
+        
+    def _start_detection(self):
+        if self._detecting == 0 or self._detecting == 2:
+            self._detecting = 1
+        elif self._detecting == 1:
+            self._detecting = 2
+        self._switch_detection_state()
             
     def _finish_checking(self):
-        if self._detecting == True:
-            self._start_detection()
+        self._detecting = 0
+        self._switch_detection_state()
         file_path = self._cl.finish_checking()
         tk.messagebox.showinfo('Finish Checking', 'Result Saved : {}'.format(file_path), parent=self.master)
         self._listbox_checked.delete(0, tk.END)
+        
         
         
     def _delete_confirmation(self):
@@ -170,7 +185,7 @@ class RecogWindow(BaseWindow):
         frame = self._camera.value
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         image = PIL.Image.fromarray(frame)
-        if self._detecting == True:
+        if self._detecting == 1:
             name, prob = self._fc.identify(frame, 0.6)
             self._label_infer.configure(text=name)
             percentage = Decimal(str(prob * 100)).quantize(Decimal('0'), rounding=ROUND_HALF_UP)
