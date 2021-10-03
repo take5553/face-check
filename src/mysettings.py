@@ -27,7 +27,7 @@ class MySettings():
         self._capture_settings = _CaptureSettings(self._d['capture_settings'])
         self._canvas_settings = _CanvasSettings(self._d['canvas_settings'])
         self._save_settings = _SaveSettings(self._d['save_settings'])
-        self._recognition_settings = _RecognitionSettings(self._d['recognition_settings'])
+        self._recognition_settings = _RecognitionSettings(self._d['recognition_settings'], self._d['save_settings'])
         self._window_settings = _WindowSettings(self._d['window_settings'])
         self._gst_str = self._d['gst_str']
         
@@ -353,16 +353,20 @@ class _SaveSettings():
 class _RecognitionSettings():
     
     
+    _main_dir = ''
     _confirmation_sound = ''
     
     
-    def __init__(self, recognition_settings):
+    def __init__(self, recognition_settings, save_settings):
         self._confirmation_sound = recognition_settings['confirmation_sound']
+        self._main_dir = save_settings['main_dir']
         
         
     @property
     def confirmation_sound(self):
-        return self._confirmation_sound
+        if self._confirmation_sound == '':
+            return ''
+        return os.path.join(self._main_dir, self._confirmation_sound)
     
     
     @confirmation_sound.setter

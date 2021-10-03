@@ -171,8 +171,14 @@ class ConfigWindow(BaseWindow):
         self._label_conf_sound = ttk.Label(self._frame_recog_inner, text="Confirmation\nSound")
         self._label_conf_sound.grid(column=column, row=row, padx=padx, pady=pady)
         column += 1
-        self._entry_conf_sound = ttk.Entry(self._frame_recog_inner, font=(fontfamily, fontsize))
-        self._entry_conf_sound.grid(column=column, row=row, sticky=tk.EW, padx=padx, pady=pady)
+        self._frame_sound = ttk.Frame(self._frame_recog_inner)
+        self._frame_sound.grid(column=column, row=row, sticky=tk.EW, padx=padx, pady=pady)
+        #----------
+        self._label_sound_desc = ttk.Label(self._frame_sound, text="(Save Directory)/")
+        self._label_sound_desc.grid(column=0, row=0)
+        self._entry_conf_sound = ttk.Entry(self._frame_sound, font=(fontfamily, fontsize))
+        self._entry_conf_sound.grid(column=1, row=0, sticky=tk.EW)
+        #----------
         row += 1
         
         # Window Settings
@@ -217,6 +223,7 @@ class ConfigWindow(BaseWindow):
         self._frame_recog.columnconfigure(0, weight=1)
         self._frame_recog.rowconfigure(0, weight=1)
         self._frame_recog_inner.columnconfigure(1, weight=1)
+        self._frame_sound.columnconfigure(1, weight=1)
         self._frame_window.columnconfigure(0, weight=1)
         self._frame_window.rowconfigure(0, weight=1)
         self._frame_window_inner.columnconfigure(1, weight=1)
