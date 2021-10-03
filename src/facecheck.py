@@ -19,6 +19,7 @@ class FaceCheck():
         self.settings = MySettings()
         self._registered_dir = self.settings.save_dir.main_dir
         self._registered_dir += self.settings.save_dir.onepic_dir
+        os.makedirs(self._registered_dir, exist_ok=True)
 
 
     def setup_network(self, dummy_im=None, dataset_setup=True):

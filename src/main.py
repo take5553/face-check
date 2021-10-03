@@ -27,7 +27,7 @@ class Application(BaseWindow):
         ipady = 50
         
         #Capture Im Window Button
-        self._button_im = ttk.Button(self._frame_main, text="Image Capture", command=self._show_capture_im)
+        self._button_im = ttk.Button(self._frame_main, text="Face Register", command=self._show_capture_im)
         self._button_im.grid(column=0, row=0, sticky=tk.EW, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady)
         
         #Registered Pics List Window Button

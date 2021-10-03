@@ -59,13 +59,9 @@ class RegisteredListWindow(BaseWindow):
         
         self._listbox_list.bind('<<ListboxSelect>>', self._update)
         
-        # # for debug
-        # self._canvas1.configure(borderwidth=1, relief='solid')
-        # self._frame_others.configure(borderwidth=1, relief='solid')
-        # self._frame_list.configure(borderwidth=1, relief='solid')
-        
         
     def _set_list(self):
+        os.makedirs(self.settings.save_dir.onepic_dir_fullpath, exist_ok=True)
         files = sorted(os.listdir(self.settings.save_dir.onepic_dir_fullpath))
         self._file_list = [os.path.join(self.settings.save_dir.onepic_dir_fullpath, f) for f in files if os.path.isfile(os.path.join(self.settings.save_dir.onepic_dir_fullpath, f))]
         names = [f[:-8] for f in files if os.path.isfile(os.path.join(self.settings.save_dir.onepic_dir_fullpath, f))]
