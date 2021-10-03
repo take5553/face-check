@@ -59,7 +59,7 @@ class RecogWindow(BaseWindow):
         
         # Others
         self._frame_others = ttk.Frame(self._frame_main)
-        self._frame_others.grid(column=1, row=0, sticky=tk.NSEW)
+        self._frame_others.grid(column=2, row=0, sticky=tk.NSEW)
         
         # Detection
         self._frame_infer = ttk.Frame(self._frame_others)

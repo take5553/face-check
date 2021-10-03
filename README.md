@@ -16,11 +16,16 @@ This application is supporsed to run on NVIDIA Jetson Nano. Here is the detail.
 
 ~~~
 git clone https://github.com/take5553/face-check.git
-chmod +x face-check/run.sh
-face-check/run.sh
+cd face-check
+chmod +x run.sh
+./run.sh
 ~~~
 
+### Sound Settings
 
+Start button -> Sound and Video -> PulseAudio Sound Settings -> Settings Tab
+
+Built-in Audio(The second one): Off
 
 ## Usage
 
