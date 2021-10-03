@@ -9,7 +9,7 @@ This project offers a simple face recognition application using [facenet-pytorch
 This application is supporsed to run on NVIDIA Jetson Nano. Here is the detail.
 
 * NVIDIA Jetson Nano Developer Kit
-* NVIDIA JetPack 5.0 or later
+* NVIDIA JetPack 5.0 (6.0 compatible is coming soon)
 * USB Web Camera or Raspberry Pi Camera module V2
 
 ## Install
@@ -17,7 +17,6 @@ This application is supporsed to run on NVIDIA Jetson Nano. Here is the detail.
 ~~~
 git clone https://github.com/take5553/face-check.git
 cd face-check
-chmod +x run.sh
 ./run.sh
 ~~~
 
@@ -26,6 +25,13 @@ chmod +x run.sh
 Start button -> Sound and Video -> PulseAudio Sound Settings -> Settings Tab
 
 Built-in Audio(The second one): Off
+
+### `docker` command without `sudo`
+
+~~~
+sudo gpasswd -a $USER docker
+sudo reboot
+~~~
 
 ## Usage
 

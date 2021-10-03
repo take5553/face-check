@@ -1,7 +1,7 @@
 if [ ! -d data ];then
     mkdir data
 fi
-xhost +
+xhost local:
 sudo docker run \
     --runtime nvidia \
     --rm \
@@ -16,4 +16,4 @@ sudo docker run \
     --device /dev/video0 \
     --workdir /face-check/src \
     take5553/face-check:jp5.0 python3 main.py
-xhost -
+xhost -local:
