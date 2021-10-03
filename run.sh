@@ -1,11 +1,9 @@
 if [ ! -d data ];then
     mkdir data
 fi
-
+xhost +
 sudo docker run \
     --runtime nvidia \
-    -d \
-    --name face-check_main_0 \
     --rm \
     --env DISPLAY=$DISPLAY \
     --env PULSE_SERVER=unix:/run/user/$UID/pulse/native \
@@ -17,6 +15,5 @@ sudo docker run \
     --volume /run/user/$UID/pulse/native:/run/user/$UID/pulse/native \
     --device /dev/video0 \
     --workdir /face-check/src \
-    take5553/face-check:jp5.0
-sudo docker exec face-check_main_0 python3 main.py
-sudo docker stop face-check_main_0
+    take5553/face-check:jp5.0 python3 main.py
+xhost -
