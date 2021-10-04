@@ -1,10 +1,10 @@
 if [ ! -d data ];then
     mkdir data
 fi
-xhost local:
 sudo docker run \
     --runtime nvidia \
     --rm \
+    --net host \
     --env DISPLAY=$DISPLAY \
     --env PULSE_SERVER=unix:/run/user/$UID/pulse/native \
     --volume /tmp/.X11-unix:/tmp/.X11-unix \
@@ -16,4 +16,3 @@ sudo docker run \
     --device /dev/video0 \
     --workdir /face-check/src \
     take5553/face-check:jp5.0 python3 main.py
-xhost -local:
