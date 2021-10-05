@@ -244,7 +244,7 @@ class ConfigWindow(BaseWindow):
         self._entry_sav_result.configure(textvariable=self._sav_result)
         self._win_full = tk.BooleanVar(value=self.settings.window.fullscreen)
         self._checkbutton_win_full.configure(variable=self._win_full)
-        self._conf_sound = tk.StringVar(value=self.settings.recognition.confirmation_sound)
+        self._conf_sound = tk.StringVar(value=self.settings.recognition.confirmation_sound_filename)
         self._entry_conf_sound.configure(textvariable=self._conf_sound)
         self._win_fontsize = tk.IntVar(value=self.settings.window.fontsize)
         self._entry_win_fontsize.configure(textvariable=self._win_fontsize, validate='key', validatecommand=vcmd)
@@ -325,7 +325,7 @@ class ConfigWindow(BaseWindow):
         self.settings.save_dir.main_dir = self._sav_dir.get()
         self.settings.save_dir.onepic_dir = self._sav_onedir.get()
         self.settings.save_dir.result_save_dir = self._sav_result.get()
-        self.settings.recognition.confirmation_sound = self._conf_sound.get()
+        self.settings.recognition.confirmation_sound_filename = self._conf_sound.get()
         self.settings.window.fullscreen = self._win_full.get()
         self.settings.window.fontsize = self._win_fontsize.get()
         

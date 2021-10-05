@@ -12,13 +12,23 @@ This application is supporsed to run on NVIDIA Jetson Nano. Here is the detail.
 * NVIDIA JetPack 5.0 (6.0 compatible is coming soon)
 * USB Web Camera or Raspberry Pi Camera module V2
 
-## Install
+## Quick Start
+
+To install
 
 ~~~
 git clone https://github.com/take5553/face-check.git
 cd face-check
+chmod +x run.sh
+~~~
+
+To run
+
+~~~
 ./run.sh
 ~~~
+
+
 
 ### Sound Settings
 

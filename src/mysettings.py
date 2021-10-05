@@ -367,9 +367,14 @@ class _RecognitionSettings():
         if self._confirmation_sound == '':
             return ''
         return os.path.join(self._main_dir, self._confirmation_sound)
+        
+        
+    @property
+    def confirmation_sound_filename(self):
+        return self._confirmation_sound
     
     
-    @confirmation_sound.setter
+    @confirmation_sound_filename.setter
     def confirmation_sound(self, value):
         self._confirmation_sound = value
         
