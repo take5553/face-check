@@ -375,7 +375,7 @@ class _RecognitionSettings():
     
     
     @confirmation_sound_filename.setter
-    def confirmation_sound(self, value):
+    def confirmation_sound_filename(self, value):
         self._confirmation_sound = value
         
         
