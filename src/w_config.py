@@ -137,7 +137,7 @@ class ConfigWindow(BaseWindow):
         row += 1
         
         column = 0
-        self._label_sav_onedir = ttk.Label(self._frame_save_inner, text="One Pic\nSub Directory")
+        self._label_sav_onedir = ttk.Label(self._frame_save_inner, text="Face Images\nDirectory")
         self._label_sav_onedir.grid(column=column, row=row, padx=padx, pady=pady)
         column += 1
         self._frame_sav_onedir = ttk.Frame(self._frame_save_inner)
