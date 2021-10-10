@@ -135,6 +135,14 @@ This small problem ignited this project. I made this app available for more gene
 
 The most important point of this application is that it is easy to use, even for people who are not familiar with Linux, Python or Jupyter. Once this app is up and running, you won't have any trouble using it with its familiar GUI and simple controls. This simplicity brings convenience and applicability wherever it is needed.
 
+## Reference
+
+* JetCam  
+  [https://github.com/NVIDIA-AI-IOT/jetcam](https://github.com/NVIDIA-AI-IOT/jetcam)
+
+* Face Recognition Using Pytorch  
+  [https://github.com/timesler/facenet-pytorch](https://github.com/timesler/facenet-pytorch)
+
 ## Licence
 
 Copyright (c) 2021 Takeshi Yamazaki  
