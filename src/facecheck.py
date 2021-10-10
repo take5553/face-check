@@ -41,7 +41,7 @@ class FaceCheck():
             print('Dataset shape is ' + str(self._registered.shape))
         if not (pre_recog is None):
             print('Start pre-recognition')
-            self._get_vec(pre_recog)
+            self.identify(pre_recog, 0.6)
             print('End pre-recognition')
             
             
