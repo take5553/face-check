@@ -1,3 +1,8 @@
+#
+# Copyright (c) 2021 Takeshi Yamazaki
+# This software is released under the MIT License, see LICENSE.
+#
+
 if [ ! -d data ];then
     mkdir data
 fi

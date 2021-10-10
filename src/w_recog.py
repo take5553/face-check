@@ -1,3 +1,8 @@
+#
+# Copyright (c) 2021 Takeshi Yamazaki
+# This software is released under the MIT License, see LICENSE.
+#
+
 from collections import deque, Counter
 import cv2
 from decimal import Decimal, ROUND_HALF_UP

@@ -1,3 +1,8 @@
+#
+# Copyright (c) 2021 Takeshi Yamazaki
+# This software is released under the MIT License, see LICENSE.
+#
+
 import json
 import os
 from device_check import get_device_id, get_format, get_device_list

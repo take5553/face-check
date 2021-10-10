@@ -1,3 +1,8 @@
+#
+# Copyright (c) 2021 Takeshi Yamazaki
+# This software is released under the MIT License, see LICENSE.
+#
+
 FROM nvcr.io/nvidia/l4t-pytorch:r32.5.0-pth1.7-py3
 
 #

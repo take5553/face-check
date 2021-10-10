@@ -1,3 +1,8 @@
+#
+# Copyright (c) 2021 Takeshi Yamazaki
+# This software is released under the MIT License, see LICENSE.
+#
+
 import cv2
 import os
 import PIL.Image, PIL.ImageTk, PIL.ImageDraw

@@ -1,3 +1,8 @@
+#
+# Copyright (c) 2021 Takeshi Yamazaki
+# This software is released under the MIT License, see LICENSE.
+#
+
 from jetcam.usb_camera import USBCamera
 from mysettings import MySettings
 
