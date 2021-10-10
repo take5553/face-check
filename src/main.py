@@ -3,6 +3,7 @@
 # This software is released under the MIT License, see LICENSE.
 #
 
+import sys
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
@@ -15,13 +16,16 @@ from w_base import BaseWindow
 
 
 class Application(BaseWindow):
-    def __init__(self, master=None):
+    def __init__(self, master=None, auto_start=False):
         super().__init__(master)
         self._capture_window = None
         self._config_window = None
         self._registered_window = None
         self._result_window = None
         self._create_widgets()
+        
+        if auto_start:
+            self._show_recog()
         
 
     def _create_widgets(self):
@@ -91,6 +95,10 @@ class Application(BaseWindow):
 
 
 if __name__ == "__main__":
+    args = sys.argv
+    fl = False
+    if args[1] == 'auto-start':
+        fl = True
     window = tk.Tk()
-    app = Application(master=window)
+    app = Application(master=window, auto_start=fl)
     app.mainloop()
