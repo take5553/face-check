@@ -139,6 +139,6 @@ The most important point of this application is that it is easy to use, even for
 
 Copyright (c) 2021 Takeshi Yamazaki  
 Released under the MIT license  
-https://opensource.org/licenses/mit-license.php
+See LICENSE
 
 Twitter: [Take555](https://twitter.com/Tak5553)
