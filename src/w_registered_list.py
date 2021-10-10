@@ -7,6 +7,7 @@ import cv2
 import os
 import PIL.Image, PIL.ImageTk
 import tkinter as tk
+from tkinter import messagebox
 from tkinter import ttk
 from w_base import BaseWindow
 

@@ -12,6 +12,7 @@ import PIL.Image, PIL.ImageTk
 from playsound import playsound
 import threading
 import tkinter as tk
+from tkinter import messagebox
 from tkinter import ttk
 from checklist import CheckList
 from mycamera import MyCamera
