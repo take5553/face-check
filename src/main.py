@@ -25,7 +25,7 @@ class Application(BaseWindow):
         self._create_widgets()
         
         if auto_start:
-            self._show_recog()
+            self.master.after(500, self._show_recog)
         
 
     def _create_widgets(self):
