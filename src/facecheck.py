@@ -27,7 +27,7 @@ class FaceCheck():
         os.makedirs(self._registered_dir, exist_ok=True)
 
 
-    def setup_network(self, dummy_im=None, dataset_setup=True):
+    def setup_network(self, dummy_im=None, dataset_setup=True, pre_recog=False):
         print('FaceCheck initializing...')
         if not (dummy_im is None):
             global mtcnn
@@ -39,6 +39,10 @@ class FaceCheck():
             self._registered = self._make_dataset(self._registered_dir)
             print('End making registered dataset')
             print('Dataset shape is ' + str(self._registered.shape))
+        if pre_recog:
+            print('Start pre-recognition')
+            self._get_vec(pre_recog)
+            print('End pre-recognition')
             
             
     def detect(self, img):

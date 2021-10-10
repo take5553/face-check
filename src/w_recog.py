@@ -27,10 +27,16 @@ class RecogWindow(BaseWindow):
         
         self._create_widgets()
         
-        dummy = self._camera.read()
+        files = sorted(os.listdir(self.settings.save_dir.onepic_dir_fullpath))
+        for f in files:
+            if os.path.isfile(os.path.join(self.settings.save_dir.onepic_dir_fullpath, f)):
+                dummy = cv2.imread(os.path.join(self.settings.save_dir.onepic_dir_fullpath, f))
+                break
+        else:
+            dummy = self._camera.read()
         dummy = cv2.cvtColor(dummy, cv2.COLOR_BGR2RGB)
         self._fc = FaceCheck()
-        self._fc.setup_network(dummy)
+        self._fc.setup_network(dummy_im=dummy, pre_recog=dummy)
         self._cl = CheckList()
         self._queue = deque([], 10)
         self._identified_pause_fl = False
