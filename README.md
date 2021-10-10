@@ -2,7 +2,9 @@
 
 This project offers a simple face recognition application using [facenet-pytorch](https://github.com/timesler/facenet-pytorch) with user-friendly GUI. This is designed for actual and practical use where you need to check specific people like your colleagues, friends, and family members.
 
-(picture)
+![top picture](pic/top.jpg)
+
+![gif demo](pic/gif-demo.gif)
 
 ## Requirement
 
@@ -121,6 +123,10 @@ You can adjust configurations. The config window is like this. The options may c
 * `Fullscreen` : to switch fullscreen or not.
 * `Font Size` : the font size which is applied to all windows.
 
+## Hacking tips
+
+(under construction)
+
 ## Motivation
 
 In the lunch break of my workplace, employees who ordered their lunch box in the morning check their names with a marker pen to confirm "I exactly ordered the lunch box" and "I took it." It takes a little time because they have to put off the cap of the pen, look for their name, check it and put the cap back. It's a little but it makes a queue.
@@ -134,3 +140,5 @@ The most important point of this application is that it is easy to use, even for
 Copyright (c) 2021 Takeshi Yamazaki  
 Released under the MIT license  
 https://opensource.org/licenses/mit-license.php
+
+Twitter: [Take555](https://twitter.com/Tak5553)
