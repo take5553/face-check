@@ -81,6 +81,8 @@ class Application(BaseWindow):
         if self._capture_window == None or not self._capture_window.winfo_exists():
             self._capture_window = tk.Toplevel()
             self._capture = RecogWindow(master=self._capture_window, auto_start=self._auto_start)
+            if self._auto_start:
+                self._auto_start = False
             
             
     def _show_registered_list(self):
@@ -98,7 +100,7 @@ class Application(BaseWindow):
 if __name__ == "__main__":
     args = sys.argv
     fl = False
-    if args[1] == 'auto':
+    if len(args) > 1 and args[1] == 'auto':
         fl = True
     window = tk.Tk()
     app = Application(master=window, auto_start=fl)
