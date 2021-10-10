@@ -20,7 +20,7 @@ from facecheck import FaceCheck
 from w_base import BaseWindow
 
 class RecogWindow(BaseWindow):
-    def __init__(self, master=None):
+    def __init__(self, master=None, auto_start=False):
         super().__init__(master)
         self._camera = MyCamera(width=self.settings.canvas.width, height=self.settings.canvas.height)
         self.master.title("Recognition")
@@ -54,6 +54,8 @@ class RecogWindow(BaseWindow):
         
         self._camera.running = True
         self._update()
+        if auto_start:
+            self.master.after(500, self._start_detection)
 
 
     def _create_widgets(self):

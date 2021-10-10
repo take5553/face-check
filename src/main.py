@@ -23,6 +23,7 @@ class Application(BaseWindow):
         self._registered_window = None
         self._result_window = None
         self._create_widgets()
+        self._auto_start = auto_start
         
         if auto_start:
             self.master.after(500, self._show_recog)
@@ -79,7 +80,7 @@ class Application(BaseWindow):
     def _show_recog(self):
         if self._capture_window == None or not self._capture_window.winfo_exists():
             self._capture_window = tk.Toplevel()
-            self._capture = RecogWindow(master=self._capture_window)
+            self._capture = RecogWindow(master=self._capture_window, auto_start=self._auto_start)
             
             
     def _show_registered_list(self):
