@@ -97,7 +97,7 @@ class Application(BaseWindow):
 if __name__ == "__main__":
     args = sys.argv
     fl = False
-    if args[1] == 'auto-start':
+    if args[1] == 'auto':
         fl = True
     window = tk.Tk()
     app = Application(master=window, auto_start=fl)
