@@ -175,13 +175,13 @@ class RecogWindow(BaseWindow):
             self._detecting = 2
         self._switch_detection_state()
             
+            
     def _finish_checking(self):
         self._detecting = 0
         self._switch_detection_state()
         file_path = self._cl.finish_checking()
         tk.messagebox.showinfo('Finish Checking', 'Result Saved : {}'.format(file_path), parent=self.master)
         self._listbox_checked.delete(0, tk.END)
-        
         
         
     def _delete_confirmation(self):
