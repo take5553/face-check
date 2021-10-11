@@ -22,9 +22,11 @@ class FaceCheck():
     def __init__(self):
         self._registered = []
         self.settings = MySettings()
-        self._registered_dir = self.settings.save_dir.main_dir
-        self._registered_dir += self.settings.save_dir.onepic_dir
-        os.makedirs(self._registered_dir, exist_ok=True)
+        self._npy_dir = self.settings.save_dir.main_dir
+        self._pics_dir = self.settings.save_dir.onepic_dir_fullpath
+        os.makedirs(self._npy_dir, exist_ok=True)
+        self._npy_filename = 'dataset.npy'
+        self._list_filename = 'filelist.txt'
 
 
     def setup_network(self, dummy_im=None, dataset_setup=True, pre_recog=None):
@@ -35,9 +37,12 @@ class FaceCheck():
             mtcnn.detect(dummy_im)
             print('End pre-detection')
         if dataset_setup:
-            print('Start making registered dataset')
-            self._registered = self._make_dataset(self._registered_dir)
-            print('End making registered dataset')
+            print('Start loading registered dataset')
+            # Load dataset
+            self._registered = self._load_dataset()
+            # Get File List
+            self._file_list = self._load_filename_list()
+            print('End loading registered dataset')
             print('Dataset shape is ' + str(self._registered.shape))
         if not (pre_recog is None):
             print('Start pre-recognition')
@@ -60,6 +65,35 @@ class FaceCheck():
             return self._file_list[result_idx][:-8], result[result_idx]
         else:
             return '', 0
+        
+        
+    def make_dataset(self):
+        fullpath_list = self._get_fullpath_list()
+        vecs = self._make_vec_set(fullpath_list)
+        np.save(os.path.join(self._npy_dir, self._npy_filename), vecs)
+        file_list_str = '\n'.join(self._get_file_list())
+        with open(os.path.join(self._npy_dir, self._list_filename), 'w') as f:
+            f.write(file_list_str)
+        
+        
+    def _make_vec_set(self, fullpath_list):
+        vecs = []
+        for file_path in fullpath_list:
+            print('Converting to vec: {}'.format(file_path))
+            img = cv2.imread(file_path)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            vecs.append(self._get_vec(img))
+        return np.stack(vecs)
+    
+    
+    def _get_file_list(self):
+        files = sorted(os.listdir(self._pics_dir))
+        return [f for f in files if os.path.isfile(os.path.join(self._pics_dir, f))]
+    
+    
+    def _get_fullpath_list(self):
+        files = sorted(os.listdir(self._pics_dir))
+        return [os.path.join(self._pics_dir, f) for f in files if os.path.isfile(os.path.join(self._pics_dir, f))]
     
     
     def _cos_sim_vs2d(self, arr, vec):
@@ -83,16 +117,12 @@ class FaceCheck():
             img_embedding = resnet(img_cropped.to(nn_device))
             return img_embedding.to('cpu').detach().numpy().copy()
     
+    
+    def _load_dataset(self):
+        return np.load(os.path.join(self._npy_dir, self._npy_filename))
 
-    def _make_dataset(self, dir_path):
-        files = sorted(os.listdir(dir_path))
-        self._file_list = [f for f in files if os.path.isfile(os.path.join(dir_path, f))]
-        ps = []
-        for i in range(len(self._file_list)):
-            print(dir_path + self._file_list[i])
-            img = cv2.imread(dir_path + self._file_list[i])
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            ps += [img]
-        q = np.stack(ps)
-        return self._get_vec(q)
-        
+
+    def _load_filename_list(self):
+        with open(os.path.join(self._npy_dir, self._list_filename)) as f:
+            filename_list = f.read
+        return str.splitlines(filename_list)
