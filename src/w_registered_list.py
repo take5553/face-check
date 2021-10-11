@@ -59,7 +59,7 @@ class RegisteredListWindow(BaseWindow):
         self._button_dataset = ttk.Button(self._frame_others, text='Make Dataset', command=self._prepare_make_dataset)
         self._button_dataset.grid(column=0, row=2, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
 
-        self._frame_main.columnconfigure(0, weight=2)
+        self._frame_main.columnconfigure(0, weight=1)
         self._frame_main.columnconfigure(1, minsize=30)
         self._frame_main.columnconfigure(2, weight=1, minsize=200)
         self._frame_main.rowconfigure(0, weight=1)
