@@ -9,7 +9,6 @@ import PIL.Image, PIL.ImageTk
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
-from facecheck import FaceCheck
 from w_base import BaseWindow
 
 
@@ -19,7 +18,6 @@ class RegisteredListWindow(BaseWindow):
         self.master.title("Registered List")
         self._create_widgets()
         self._set_list()
-        self._fc = FaceCheck()
 
 
     def _create_widgets(self):
@@ -54,12 +52,8 @@ class RegisteredListWindow(BaseWindow):
         # Delete Button
         self._button_delete = ttk.Button(self._frame_others, text='Delete Picture', command=self._delete_pic)
         self._button_delete.grid(column=0, row=1, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
-        
-        # Dataset Button
-        self._button_dataset = ttk.Button(self._frame_others, text='Make Dataset', command=self._prepare_make_dataset)
-        self._button_dataset.grid(column=0, row=2, padx=padx, pady=pady, ipadx=ipadx, ipady=ipady, sticky=(tk.W, tk.E))
 
-        self._frame_main.columnconfigure(0, weight=1)
+        self._frame_main.columnconfigure(0, weight=2)
         self._frame_main.columnconfigure(1, minsize=30)
         self._frame_main.columnconfigure(2, weight=1, minsize=200)
         self._frame_main.rowconfigure(0, weight=1)
@@ -98,16 +92,6 @@ class RegisteredListWindow(BaseWindow):
         image = PIL.Image.fromarray(frame)
         self._photo = PIL.ImageTk.PhotoImage(image=image)
         self._canvas1.create_image(self._canvas1.winfo_width() / 2, self._canvas1.winfo_height() / 2, image = self._photo, anchor=tk.CENTER)
-        
-        
-    def _prepare_make_dataset(self):
-        self._button_dataset.configure(text='Making dataset ...', state=tk.DISABLED)
-        self.master.after(100, self._make_dataset)
-        
-        
-    def _make_dataset(self):
-        self._fc.make_dataset()
-        self._button_dataset.configure(text='Make dataset', state=tk.NORMAL)
 
 
 if __name__ == "__main__":

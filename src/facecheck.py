@@ -39,9 +39,20 @@ class FaceCheck():
         if dataset_setup:
             print('Start loading registered dataset')
             # Load dataset
+            if not os.path.exists(os.path.join(self._npy_dir, self._npy_filename)) or not os.path.exists(os.path.join(self._npy_dir, self._list_filename)):
+                print('Renewing dataset')
+                self.make_dataset()
+                self._file_list = self._load_filename_list()
+            else:
+                file_list_stored = self._load_filename_list()
+                file_list_current = self._get_file_list()
+                if (file_list_stored == file_list_current):
+                    self._file_list = file_list_stored            
+                else:
+                    print('Renewing dataset')
+                    self.make_dataset()
+                    self._file_list = self._load_filename_list()
             self._registered = self._load_dataset()
-            # Get File List
-            self._file_list = self._load_filename_list()
             print('End loading registered dataset')
             print('Dataset shape is ' + str(self._registered.shape))
         if not (pre_recog is None):
