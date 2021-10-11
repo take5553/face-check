@@ -124,5 +124,5 @@ class FaceCheck():
 
     def _load_filename_list(self):
         with open(os.path.join(self._npy_dir, self._list_filename)) as f:
-            filename_list = f.read
+            filename_list = f.read()
         return str.splitlines(filename_list)
