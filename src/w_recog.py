@@ -44,8 +44,9 @@ class RecogWindow(BaseWindow):
         self._identified_pause_fl = False
         self._detecting = 0
         if len(self._cl.get_checked_list()) > 0:
-                self._listbox_checked.insert(tk.END, self._cl.get_checked_list())
-                self._detecting = 2
+            for item in self._cl.get_checked_list():
+                self._listbox_checked.insert(tk.END, item)
+            self._detecting = 2
         self._switch_detection_state()
         if self.settings.recognition.confirmation_sound != '':
             self._sound_thread = threading.Thread(target=self._play_sound)
