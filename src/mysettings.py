@@ -61,7 +61,7 @@ class MySettings():
                 'result_save_dir' : self._save_settings.result_save_dir
             },
             'recognition_settings' : {
-                'confirmation_sound' : self._recognition_settings.confirmation_sound
+                'confirmation_sound' : self._recognition_settings.confirmation_sound_filename
             },
             'window_settings' : {
                 'fullscreen' : self._window_settings.fullscreen,
