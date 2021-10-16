@@ -139,7 +139,7 @@ class MySettings():
                 'save_settings' : {
                     'main_dir' : os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../data/")),
                     'onepic_dir' : 'register/',
-                    'result_save_dir' : os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../data/result/"))
+                    'result_save_dir' : 'result/'
                 },
                 'recognition_settings' :{
                     'confirmation_sound' : ''
@@ -357,7 +357,7 @@ class _SaveSettings():
     
     @property
     def result_save_dir_fullpath(self):
-        return self._main.dir + self._result_save_dir
+        return self._main_dir + self._result_save_dir
         
         
 class _RecognitionSettings():
