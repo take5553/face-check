@@ -25,7 +25,8 @@ To install
 ~~~
 git clone https://github.com/take5553/face-check.git
 cd face-check
-chmod +x run.sh
+chmod +x install.sh
+./install.sh
 ~~~
 
 To run

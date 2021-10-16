@@ -137,7 +137,7 @@ class ConfigWindow(BaseWindow):
         self._label_sav_dir = ttk.Label(self._frame_save_inner, text="Save\nDirectory")
         self._label_sav_dir.grid(column=column, row=row, padx=padx, pady=pady)
         column += 1
-        self._entry_sav_dir = ttk.Entry(self._frame_save_inner, font=(fontfamily, fontsize))
+        self._entry_sav_dir = ttk.Entry(self._frame_save_inner, font=(fontfamily, fontsize), state=tk.DISABLED)
         self._entry_sav_dir.grid(column=column, row=row, sticky=tk.EW, padx=padx, pady=pady)
         row += 1
         
@@ -159,8 +159,14 @@ class ConfigWindow(BaseWindow):
         self._label_sav_result = ttk.Label(self._frame_save_inner, text="Result Save\nDirectory")
         self._label_sav_result.grid(column=column, row=row, padx=padx, pady=pady)
         column += 1
-        self._entry_sav_result = ttk.Entry(self._frame_save_inner, font=(fontfamily, fontsize))
-        self._entry_sav_result.grid(column=column, row=row, sticky=tk.EW, padx=padx, pady=pady)
+        self._frame_sav_result = ttk.Frame(self._frame_save_inner)
+        self._frame_sav_result.grid(column=column, row=row, sticky=tk.EW, padx=padx, pady=pady)
+        # ----------
+        self._label_sav_result_pre = ttk.Label(self._frame_sav_result, text='(Save Directory)/')
+        self._label_sav_result_pre.grid(column=0, row=0)
+        self._entry_sav_result = ttk.Entry(self._frame_sav_result, font=(fontfamily, fontsize))
+        self._entry_sav_result.grid(column=1, row=0, sticky=tk.EW)
+        # ----------
         row += 1
         
         # Recognition Settings
@@ -221,6 +227,7 @@ class ConfigWindow(BaseWindow):
         self._frame_save.columnconfigure(0, weight=1)
         self._frame_save.rowconfigure(0, weight=1)
         self._frame_save_inner.columnconfigure(1, weight=1)
+        self._frame_sav_result.columnconfigure(1, weight=1)
         self._frame_sav_onedir.columnconfigure(1, weight=1)
         self._frame_canvas.columnconfigure(0, weight=1)
         self._frame_canvas.rowconfigure(0, weight=1)

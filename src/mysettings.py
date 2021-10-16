@@ -354,6 +354,11 @@ class _SaveSettings():
     def result_save_dir(self, value):
         self._result_save_dir = value
         
+    
+    @property
+    def result_save_dir_fullpath(self):
+        return self._main.dir + self._result_save_dir
+        
         
 class _RecognitionSettings():
     

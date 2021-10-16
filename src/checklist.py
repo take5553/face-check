@@ -23,7 +23,7 @@ class CheckList():
         os.makedirs(self._list_path, exist_ok=True)
         self._registered_dir = self._list_path + self.settings.save_dir.onepic_dir
         os.makedirs(self._registered_dir, exist_ok=True)
-        self._result_dir = self.settings.save_dir.result_save_dir
+        self._result_dir = self.settings.save_dir.result_save_dir_fullpath
         os.makedirs(self._result_dir, exist_ok=True)
         
         self.init_checking()
