@@ -3,7 +3,17 @@
 # This software is released under the MIT License, see LICENSE.
 #
 
-FROM nvcr.io/nvidia/l4t-pytorch:r32.5.0-pth1.7-py3
+# JetPack 4.6 (L4T R32.6.1)
+#FROM nvcr.io/nvidia/l4t-pytorch:r32.6.1-pth1.9-py3
+
+# JetPack 4.5 (L4T R32.5.0)
+FROM nvcr.io/nvidia/l4t-pytorch:r32.5.0-pth1.7-py3    
+
+# JetPack 4.4.1 (L4T R32.4.4)
+#FROM nvcr.io/nvidia/l4t-pytorch:r32.4.4-pth1.6-py3
+
+# JetPack 4.4 (L4T R32.4.3)
+#FROM nvcr.io/nvidia/l4t-pytorch:r32.4.3-pth1.6-py3
 
 #
 # build OpenCV
