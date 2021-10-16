@@ -10,6 +10,7 @@ import random
 import re
 import subprocess
 import tkinter as tk
+from tkinter import messagebox
 from tkinter import ttk
 from facenet_pytorch import MTCNN
 import torch
@@ -28,12 +29,14 @@ class ImCaptureWindow(BaseWindow):
         self._cap_im_fl = False
         self._abspath = self.settings.save_dir.main_dir
         self._file_ext = ".jpg"
+        self._checklist_filename = 'checklist.txt'
         self._image_index = 0
         self._fc = FaceCheck()
         dummy = self._camera.read()
         dummy = cv2.cvtColor(dummy, cv2.COLOR_BGR2RGB)
         self._fc.setup_network(dummy_im=dummy, dataset_setup=False)
         self._show_detection = False
+        self._added_fl = False
 
         self._camera.running = True
         self._update()
@@ -119,6 +122,10 @@ class ImCaptureWindow(BaseWindow):
 
 
     def _close(self):
+        if os.path.exists(os.path.join(self.settings.save_dir.main_dir, self._checklist_filename)) and self._added_fl:
+            ret = tk.messagebox.askyesno('Confirm', 'Do you want to delete "{}" to update the list?'.format(self._checklist_filename), parent=self.master)
+            if ret == True:
+                os.remove(os.path.join(self.settings.save_dir.main_dir, self._checklist_filename))
         self._camera.running = False
         self._camera.cap.release()
         self.master.destroy()
@@ -137,6 +144,7 @@ class ImCaptureWindow(BaseWindow):
         if self._cap_im_fl == True:
             file_path = '{}{}{:04}{}'.format(self._abspath + self._im_dir, self._file_prefix, self._image_index, self._file_ext)
             cv2.imwrite(file_path, frame)
+            self._added_fl = True
             self._label_sav_path.configure(text=file_path)
             self._image_index += 1
             self._cap_im_fl = False
