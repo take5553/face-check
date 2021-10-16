@@ -51,7 +51,7 @@ class CheckList():
     def init_checking(self):
         files = sorted(os.listdir(self._registered_dir))
         self._file_list = [os.path.join(self._registered_dir, f) for f in files if os.path.isfile(os.path.join(self._registered_dir, f))]
-        registered_list = [s[:-8] for s in files]
+        registered_list = list(dict.fromkeys([s[:-8] for s in files]))
         if not os.path.exists(self._list_path + self._checklist_filename):
             self._check_list = registered_list
             self._non_registered_list = []
