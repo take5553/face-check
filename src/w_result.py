@@ -12,7 +12,7 @@ class ResultWindow(BaseWindow):
     def __init__(self, master=None):
         super().__init__(master)
         self._result_file_prefix = 'result'
-        self._list_path = self.settings.save_dir.result_save_dir
+        self._list_path = self.settings.save_dir.result_save_dir_fullpath
         os.makedirs(self._list_path, exist_ok=True)
         self.master.title("Result")
         
