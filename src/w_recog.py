@@ -68,7 +68,9 @@ class RecogWindow(BaseWindow):
         fontsize = self.settings.window.fontsize
         
         s = ttk.Style()
-        s.configure('Inference.TLabel', font=("", 40, 'bold'), foreground='red')
+        s.configure('Inference.TLabel', font=("", 30, 'bold'), foreground='red')
+        s.configure('Failed.TLabel', font=("", 30, 'bold'), foreground='blue')
+        s.configure('Already.TLabel', font=("", 30, 'bold'), foreground='green')
 
         # Canvas
         self._canvas1 = tk.Canvas(self._frame_main, width=self.settings.canvas.width, height=self.settings.canvas.height)
@@ -174,12 +176,17 @@ class RecogWindow(BaseWindow):
             self._detecting = 1
         elif self._detecting == 1:
             self._detecting = 2
+            if self._identified_pause_fl == False:
+                self._label_id.configure(text='')
+                self._label_id_name.configure(text='')
         self._switch_detection_state()
             
             
     def _finish_checking(self):
         self._detecting = 0
         self._switch_detection_state()
+        self._label_id.configure(text='')
+        self._label_id_name.configure(text='')
         file_path = self._cl.finish_checking()
         tk.messagebox.showinfo('Finish Checking', 'Result Saved : {}'.format(file_path), parent=self.master)
         self._listbox_checked.delete(0, tk.END)
@@ -207,24 +214,35 @@ class RecogWindow(BaseWindow):
             self._label_infer.configure(text=name)
             percentage = Decimal(str(prob * 100)).quantize(Decimal('0'), rounding=ROUND_HALF_UP)
             self._label_infer_prob.configure(text='( {} % )'.format(percentage))
-            if self._identified_pause_fl == False and (self._cl.has_name(name) and not self._cl.already_checked(name)):
-                if name == '':
-                    self._queue.clear()
-                else:
+            if self._identified_pause_fl == False:
+                if self._cl.has_name(name) and not self._cl.already_checked(name):
                     self._queue.append(name)
+                    self._label_id.configure(text='')
+                    self._label_id_name.configure(text='')
                     if len(self._queue) == 10:
                         counter = Counter(self._queue)
                         mc = counter.most_common()[0]
                         if mc[1] >= 9 and mc[0] != '':
                             # identified
-                            self._label_id.configure(text='Confirmed')
-                            self._label_id_name.configure(text=mc[0])
+                            self._label_id.configure(text='Confirmed', style='Inference.TLabel')
+                            self._label_id_name.configure(text=mc[0], style='Inference.TLabel')
                             self._cl.add_to_checked(mc[0])
                             self._listbox_checked.insert(tk.END, mc[0])
                             self._identified_pause_fl = True
                             if self._sound_thread != None:
                                 self._sound_thread.start()
                             self.master.after(5000, self._reset_queue)
+                elif not self._cl.has_name(name):
+                    if name == '':
+                        self._queue.clear()
+                        self._label_id.configure(text='')
+                        self._label_id_name.configure(text='')
+                    else:
+                        self._label_id.configure(text='Not on', style='Failed.TLabel')
+                        self._label_id_name.configure(text='the list', style='Failed.TLabel')
+                else:
+                    self._label_id.configure(text='Already', style='Already.TLabel')
+                    self._label_id_name.configure(text='confirmed', style='Already.TLabel')
         self._photo = PIL.ImageTk.PhotoImage(image=image)
         self._canvas1.create_image(self._canvas1.winfo_width() / 2, self._canvas1.winfo_height() / 2, image = self._photo, anchor=tk.CENTER)
         self.master.after(self.settings.canvas.update_interval, self._update)
