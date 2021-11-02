@@ -2,6 +2,8 @@
 
 This project offers a simple face recognition application using [facenet-pytorch](https://github.com/timesler/facenet-pytorch) with user-friendly GUI. This is designed for actual and practical use where you need to check specific people like your colleagues, friends and family members.
 
+![top picture](pic/top.jpg)
+
 [![](https://img.youtube.com/vi/UNkpHY_iiMY/0.jpg)](https://www.youtube.com/watch?v=UNkpHY_iiMY)
 
 ![gif demo](pic/gif-demo.gif)
