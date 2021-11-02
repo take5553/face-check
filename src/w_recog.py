@@ -68,9 +68,9 @@ class RecogWindow(BaseWindow):
         fontsize = self.settings.window.fontsize
         
         s = ttk.Style()
-        s.configure('Inference.TLabel', font=("", 30, 'bold'), foreground='red')
-        s.configure('Failed.TLabel', font=("", 30, 'bold'), foreground='blue')
-        s.configure('Already.TLabel', font=("", 30, 'bold'), foreground='green')
+        s.configure('Inference.TLabel', font=("", 36, 'bold'), foreground='red')
+        s.configure('Failed.TLabel', font=("", 36, 'bold'), foreground='blue')
+        s.configure('Already.TLabel', font=("", 36, 'bold'), foreground='green')
 
         # Canvas
         self._canvas1 = tk.Canvas(self._frame_main, width=self.settings.canvas.width, height=self.settings.canvas.height)
