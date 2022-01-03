@@ -18,6 +18,7 @@ from checklist import CheckList
 from mycamera import MyCamera
 from facecheck import FaceCheck
 from w_base import BaseWindow
+from w_result_check import ResultCheckWindow
 
 class RecogWindow(BaseWindow):
     def __init__(self, master=None, auto_start=False):
@@ -188,7 +189,9 @@ class RecogWindow(BaseWindow):
         self._label_id.configure(text='')
         self._label_id_name.configure(text='')
         file_path = self._cl.finish_checking()
-        tk.messagebox.showinfo('Finish Checking', 'Result Saved : {}'.format(file_path), parent=self.master)
+        self._result_check_window = tk.Toplevel()
+        self._result_check = ResultCheckWindow(master=self._result_check_window, file_path=file_path)
+        # tk.messagebox.showinfo('Finish Checking', 'Result Saved : {}'.format(file_path), parent=self.master)
         self._listbox_checked.delete(0, tk.END)
         
         
