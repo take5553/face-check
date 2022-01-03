@@ -37,12 +37,12 @@ class ResultCheckWindow(BaseWindow):
         
         # self._frame_main is defined in BaseWindow
         
-        self._label_file_path = ttk.Label(self._frame_main, text=self._file_path)
+        self._label_file_path = ttk.Label(self._frame_main, text='Result File: ' + self._file_path)
         self._label_file_path.grid(column=0, row=0, columnspan=3, sticky=tk.NSEW)
         
         self._frame_not_checked = ttk.Frame(self._frame_main)
         self._frame_not_checked.grid(column=0, row=1, sticky=(tk.W, tk.E, tk.N, tk.S))
-        self._label_not_checked = ttk.Label(self._frame_not_checked, text='Not Checked:')
+        self._label_not_checked = ttk.Label(self._frame_not_checked, text='Not Checked:', font=("", fontsize, "bold"))
         self._label_not_checked.grid(column=0, row=0, sticky=tk.NSEW)
         self._frame_nchecked_list = ttk.Frame(self._frame_not_checked)
         self._frame_nchecked_list.grid(column=0, row=1, sticky=tk.NSEW)
@@ -54,7 +54,7 @@ class ResultCheckWindow(BaseWindow):
         
         self._frame_not_registered = ttk.Frame(self._frame_main)
         self._frame_not_registered.grid(column=2, row=1, sticky=(tk.W, tk.E, tk.N, tk.S))
-        self._label_not_registered = ttk.Label(self._frame_not_registered, text='Not Registered:')
+        self._label_not_registered = ttk.Label(self._frame_not_registered, text='Not Registered:', font=("", fontsize, "bold"))
         self._label_not_registered.grid(column=0, row=0, sticky=tk.NSEW)
         self._frame_nregistered_list = ttk.Frame(self._frame_not_registered)
         self._frame_nregistered_list.grid(column=0, row=1, sticky=tk.NSEW)
@@ -67,7 +67,7 @@ class ResultCheckWindow(BaseWindow):
         self._frame_main.columnconfigure(0, weight=1)
         self._frame_main.columnconfigure(1, minsize=20)
         self._frame_main.columnconfigure(2, weight=1)
-        self._frame_main.rowconfigure(0, minsize=30)
+        self._frame_main.rowconfigure(0, minsize=50)
         self._frame_main.rowconfigure(1, weight=1)
         self._frame_not_checked.rowconfigure(0, minsize=30)
         self._frame_not_checked.rowconfigure(1, weight=1)
