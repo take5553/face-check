@@ -103,4 +103,4 @@ class CheckList():
         except OSError as err:
             pass
         self._checked_list = []
-        return self._list_path + file_name
+        return self._result_dir + file_name
