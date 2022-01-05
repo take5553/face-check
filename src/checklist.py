@@ -98,6 +98,9 @@ class CheckList():
         os.makedirs(self._result_dir, exist_ok=True)
         with open(self._result_dir + file_name, 'w') as f:
             f.write(result)
-        os.remove(self._list_path + self._checkedlist_filename)
+        try:
+            os.remove(self._list_path + self._checkedlist_filename)
+        except OSError as err:
+            pass
         self._checked_list = []
         return self._list_path + file_name
